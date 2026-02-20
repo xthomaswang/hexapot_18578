@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMU Mechatronics 2026 Team 6 - Hexapod Dancing Robot</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="pages/system-design.html">System Design</a></li>
+        <li><a href="pages/implementation.html">Implementation</a></li>
+        <li><a href="pages/performance.html">Performance</a></li>
+        <li><a href="pages/management.html">Management</a></li>
+        <li><a href="pages/media.html">Media</a></li>
+        <li><a href="pages/team.html">Team</a></li>
+        <li><a href="pages/documents.html">Documents</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Hexapod <span>Dancing Robot</span></h1>
+    <p class="subtitle">A six-legged, human-rideable robot built for dance performance</p>
+    <p class="course-info">CMU Mechatronic Design (18-578 / 16-778 / 24-778) | Spring 2026 | Team 6</p>
+    <div class="hero-images">
+      <img src="assets/images/proposal/1_hexapod_sketch.png" alt="Hexapod concept sketch">
+      <img src="assets/images/proposal/1_controller_sketch.png" alt="Controller concept sketch">
+    </div>
+  </section>
+
+  <!-- Problem Description -->
+  <main class="content">
+    <div class="section">
+      <h2>Problem Description</h2>
+      <p>
+        Imagine two performers seated atop a giant, six-legged robot, dancing in sync with the machine beneath them.
+        Our Hexapod Dancing Robot is a rectangular-body hexapod featuring <strong>6 legs with 3 degrees of freedom each</strong>,
+        designed to carry two riders while performing choreographed walking and dancing movements.
+      </p>
+      <p>
+        The hexapod allows two people to sit and perform on both sides, with an emergency stop positioned dead center
+        for quick access by both riders. The robot features an <strong>IMU-based flip detection</strong> system that automatically
+        shuts down the robot if it tips beyond a safe angle, ensuring safety in a live performance environment.
+      </p>
+      <p>
+        Controlled via a <strong>custom wireless controller</strong> with joysticks and a speed dial communicating over Bluetooth
+        to an onboard Raspberry Pi, the hexapod is designed for modularity (ships in a 3 ft x 3 ft case),
+        robust construction (supports a 170 lb rider at 2-3 ft off the ground), and expressive motion
+        (tripod gait, wave gait, and custom dance gaits).
+      </p>
+
+      <div class="figure medium">
+        <img src="assets/images/proposal/6a_system_architecture.png" alt="System Architecture Overview">
+        <figcaption>Figure 1: System Architecture Overview showing the Software Integration & Communication Layer coordinating between Sensor, Motor Control, and Mechanical subsystems.</figcaption>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Key Features</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+        <div class="card">
+          <h3>18 BLDC Motors</h3>
+          <p>ODrive-controlled brushless DC motors &mdash; 6 high-torque coxa motors and 12 lighter femur/tibia motors &mdash; powering 3 DOF per leg.</p>
+        </div>
+        <div class="card">
+          <h3>Dual-Rider Platform</h3>
+          <p>Supports two performers seated cross-legged or in standard chair position, 2-3 ft off the ground.</p>
+        </div>
+        <div class="card">
+          <h3>Custom Controller</h3>
+          <p>Wireless Bluetooth controller with dual joysticks, potentiometer speed dial, and mode selection buttons.</p>
+        </div>
+        <div class="card">
+          <h3>Safety First</h3>
+          <p>Emergency stop accessible to both riders, IMU-based auto-shutoff on flip, smooth edges throughout.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

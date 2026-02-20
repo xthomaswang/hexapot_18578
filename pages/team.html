@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team | CMU Mechatronics 2026 Team 6</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="system-design.html">System Design</a></li>
+        <li><a href="implementation.html">Implementation</a></li>
+        <li><a href="performance.html">Performance</a></li>
+        <li><a href="management.html">Management</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="documents.html">Documents</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Team 6</h1>
+    <p>Hexapod Dancing Robot</p>
+  </header>
+
+  <main class="content">
+
+    <section class="section">
+      <h2>Team Members</h2>
+      <div class="team-grid">
+
+        <div class="team-member">
+          <div class="photo">Photo Coming Soon</div>
+          <div class="info">
+            <h3>Dillon Ma</h3>
+            <p class="role">CAD &amp; Mechanical Design</p>
+            <p>CAD design of the hexapod robot in SolidWorks, including the body (base plate, top plate), six three-DOF leg linkages (coxa, femur, tibia), and full assembly. Also responsible for finalizing leg dimensions and mechanical fabrication.</p>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="photo">Photo Coming Soon</div>
+          <div class="info">
+            <h3>Mithun Roy</h3>
+            <p class="role">Electrical &amp; Hardware</p>
+            <p>Motor and servo selection, power supply design, and hardware integration. Responsible for the electrical system including power distribution, wiring, and ensuring all electronic subsystems are properly powered and connected.</p>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="photo">Photo Coming Soon</div>
+          <div class="info">
+            <h3>Thomas Wang</h3>
+            <p class="role">Software &amp; System Integration</p>
+            <p>Software architecture and communication protocol design between the Raspberry Pi and ESP32 over UART. Developed the layered Raspberry Pi control software: inverse kinematics engine, motion planning (gait generation), AprilTag-based calibration, and manual/automated control modes.</p>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="photo">Photo Coming Soon</div>
+          <div class="info">
+            <h3>Leena Aljurashi</h3>
+            <p class="role">Embedded Systems</p>
+            <p>ESP32 embedded firmware using FreeRTOS with six concurrent real-time tasks: Bluetooth communication, IMU reading, vision data reception, main control loop, servo output driving, and safety monitoring. Also responsible for controller firmware and Bluetooth link.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Presenters Schedule</h2>
+      <p>Presentation schedule for progress reviews throughout the semester.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Presentation</th><th>Date</th><th>Presenter</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Sensors Lab (A1)</td><td>Jan 28</td><td>Mithun Roy</td></tr>
+            <tr><td>Motors Lab (A2)</td><td>Feb 4</td><td>Dillon Ma</td></tr>
+            <tr><td>Design Proposal Presentation (A3)</td><td>Feb 11</td><td>All Members</td></tr>
+            <tr><td>System Demo #1 (A5)</td><td>Feb 18</td><td>All Members</td></tr>
+            <tr><td>Website Check 1 (A19.1)</td><td>Feb 20</td><td>&mdash;</td></tr>
+            <tr><td>System Demo #2 (A6)</td><td>Feb 25</td><td>All Members</td></tr>
+            <tr><td>System Demo #3 (A7)</td><td>Mar 9</td><td>All Members</td></tr>
+            <tr><td>Midsemester Presentation (A8)</td><td>Mar 11 &amp; 16</td><td>All Members</td></tr>
+            <tr><td>System Demo #4 (A10)</td><td>Mar 23</td><td>All Members</td></tr>
+            <tr><td>Website Check 2 (A19.2)</td><td>Mar 27</td><td>&mdash;</td></tr>
+            <tr><td>System Demo #5 (A11)</td><td>Mar 30</td><td>All Members</td></tr>
+            <tr><td>System Demo #6 (A12)</td><td>Apr 6</td><td>All Members</td></tr>
+            <tr><td>System Demo #7 (A13)</td><td>Apr 13</td><td>All Members</td></tr>
+            <tr><td>Final System Demo (A14)</td><td>Apr 15</td><td>All Members</td></tr>
+            <tr><td>Final System Demo Encore (A15)</td><td>Apr 22</td><td>All Members</td></tr>
+            <tr><td>Public Presentation (A16)</td><td>Apr 29</td><td>All Members</td></tr>
+            <tr><td>Final Report (A17)</td><td>May 1</td><td>All Members</td></tr>
+            <tr><td>Website Check 3 (A19.3)</td><td>May 4</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents | CMU Mechatronics 2026 Team 6</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="system-design.html">System Design</a></li>
+        <li><a href="implementation.html">Implementation</a></li>
+        <li><a href="performance.html">Performance</a></li>
+        <li><a href="management.html">Management</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="documents.html">Documents</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>Documents</h1>
+    <p>Project documentation, reports, and reference materials</p>
+  </header>
+
+  <main class="content">
+
+    <!-- Presentations -->
+    <section class="section">
+      <h2>Presentations</h2>
+      <ul class="doc-list">
+        <li>
+          <span class="doc-icon">DOC</span>
+          <div class="doc-info">
+            <a href="../assets/documents/Team6_DesignProposal.docx" class="doc-title">Design Proposal</a>
+            <p class="doc-desc">Feb 2026 &mdash; Comprehensive design proposal covering requirements, architecture, trade studies, and project plan.</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <a href="../assets/documents/6_senor_ILR_Thomas.pdf" class="doc-title">ILR #1 &mdash; Thomas Wang</a>
+            <p class="doc-desc">Feb 2026 &mdash; Individual Lab Report covering sensor subsystem progress.</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">ILR #1 &mdash; Dillon Ma</span>
+            <p class="doc-desc">Coming soon</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">ILR #1 &mdash; Leena Aljurashi</span>
+            <p class="doc-desc">Coming soon</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">ILR #1 &mdash; Mithun Roy</span>
+            <p class="doc-desc">Coming soon</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">Mid-semester Design Review Presentation</span>
+            <p class="doc-desc">Due before spring break</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">Public Presentation Quad Chart</span>
+            <p class="doc-desc">Due early May</p>
+          </div>
+        </li>
+        <li>
+          <span class="doc-icon">PDF</span>
+          <div class="doc-info">
+            <span class="doc-title">Final Report</span>
+            <p class="doc-desc">Due early May</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Design Brainstorming -->
+    <section class="section">
+      <h2>Design Brainstorming</h2>
+      <p>Summary of ideas generated during initial and subsequent design brainstorming sessions.</p>
+
+      <div class="card">
+        <h3>Leg Configuration: 2 DOF vs. 3 DOF</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4a_2vs3DOF.png" alt="2 DOF vs 3 DOF comparison">
+        </div>
+        <p>Evaluated 2 DOF vs 3 DOF leg configurations. <strong>3 DOF selected</strong> for zero-degree turning radius and lateral movement capability, essential for dance performance.</p>
+      </div>
+
+      <div class="card">
+        <h3>Body Shape: Rectangular vs. Hexagonal</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4b_rectangleVShexagon.png" alt="Body shape comparison">
+        </div>
+        <p>Rectangular vs hexagonal body. <strong>Rectangular chosen</strong> for dual-rider seating arrangement and 3 ft &times; 3 ft shipping constraint compatibility.</p>
+      </div>
+
+      <div class="card">
+        <h3>Microcontroller Selection</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4c_microcontroller_options.png" alt="Microcontroller options">
+        </div>
+        <p>Arduino vs ESP32 vs STM32. <strong>ESP32 selected</strong> for built-in Bluetooth and paired with Raspberry Pi for high-level computation.</p>
+      </div>
+
+      <div class="card">
+        <h3>Controller Design</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4d_controller_options.png" alt="Controller options">
+        </div>
+        <p>Custom vs premade controller. <strong>Custom selected</strong> for hexapod-specific controls (gait selection, speed dial) and reliable ESP32-to-ESP32 Bluetooth link.</p>
+      </div>
+    </section>
+
+    <!-- Drawings, Schematics & Datasheets -->
+    <section class="section">
+      <h2>Drawings, Schematics &amp; Datasheets</h2>
+
+      <h3>Mechanical</h3>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/proposal/6a_system_architecture.png" alt="System architecture">
+          <figcaption>System architecture overview</figcaption>
+        </div>
+      </div>
+      <p><em>Updated mechanical drawings with ODrive motor mounts will be added once motor selection is finalized.</em></p>
+
+      <h3>Electrical</h3>
+      <p>Wiring diagrams, circuit schematics, and PCB layouts will be added as they are developed.</p>
+
+      <h3>Datasheets</h3>
+      <p>Key component datasheets (ODrive motor controllers, BLDC motors, MPU6050 IMU, ESP32 DevKit) will be linked here as reference material.</p>
+    </section>
+
+    <!-- Component Testing -->
+    <section class="section">
+      <h2>Component Testing &amp; Experiment Results</h2>
+      <p>Component testing results will be documented here as subsystems are developed and tested throughout the semester.</p>
+    </section>
+
+    <!-- Software -->
+    <section class="section">
+      <h2>Software</h2>
+      <p>Relevant, well-commented code snippets will be added as software modules are completed. Each document will include a full header stating: class name, team name, team member names, description, and date.</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

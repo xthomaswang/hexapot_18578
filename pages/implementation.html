@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Implementation | CMU Mechatronics 2026 Team 6</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="system-design.html">System Design</a></li>
+        <li><a href="implementation.html">Implementation</a></li>
+        <li><a href="performance.html">Performance</a></li>
+        <li><a href="management.html">Management</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="documents.html">Documents</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>System Implementation</h1>
+    <p>Subsystem development progress and full system integration</p>
+  </header>
+
+  <main class="content">
+
+    <section class="section">
+      <h2>Full System Overview</h2>
+      <p>The hexapod dancing robot is composed of four tightly integrated subsystems: <strong>Motor Control</strong>, <strong>Sensor</strong>, <strong>Software</strong>, and <strong>Mechanical</strong>. Together they enable the robot to walk, respond to rider input, maintain stability, and perform choreographed routines.</p>
+      <div class="figure medium">
+        <img src="../assets/images/proposal/6a_system_architecture.png" alt="System architecture diagram">
+        <figcaption>Figure 1: Overall system architecture showing subsystem interactions.</figcaption>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Motor Control Subsystem</h2>
+      <div class="card">
+        <p>The hexapod uses <strong>18 brushless DC (BLDC) motors</strong> controlled by <strong>ODrive motor controllers</strong> &mdash; three per leg across six legs. Each leg consists of three joints:</p>
+        <ul>
+          <li><strong>Coxa</strong> &mdash; Hip yaw joint, providing lateral rotation (high-torque motor)</li>
+          <li><strong>Femur</strong> &mdash; Hip pitch joint, providing vertical lift (lighter motor)</li>
+          <li><strong>Tibia</strong> &mdash; Knee pitch joint, controlling lower leg extension (lighter motor)</li>
+        </ul>
+
+        <h3>Motor Configuration</h3>
+        <p>The motor selection uses a split strategy based on force requirements:</p>
+        <ul>
+          <li><strong>6 Coxa motors (high-torque):</strong> These bear the most load and require the highest torque output. Candidates under evaluation include the ODrive D6374 (150KV), D5065, and M8325S.</li>
+          <li><strong>12 Femur/Tibia motors (lighter):</strong> Less force is needed for the femur and tibia joints. Candidates include the ODrive D5212S (300KV) and Kraken X44.</li>
+        </ul>
+
+        <h3>Force Analysis</h3>
+        <ul>
+          <li>150 lb payload &rarr; ~20 lb effective load after wheels + friction</li>
+          <li>2 riders = ~40 lb effective load</li>
+          <li>After robot weight: ~40&ndash;50 lb total effective load</li>
+          <li>&times; 3 stall margin = 120&ndash;150 lb-force required</li>
+          <li>&times; 1.5 safety factor = 180&ndash;225 lb-force total</li>
+          <li>&divide; 6 legs = <strong>30&ndash;37.5 kg per leg</strong></li>
+        </ul>
+
+        <h3>Motor Candidates Under Evaluation</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Motor</th><th>KV Rating</th><th>Application</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>ODrive D6374</td><td>150 KV</td><td>Coxa (high-torque)</td><td><span class="badge pending">Evaluating</span></td></tr>
+              <tr><td>ODrive D5212S</td><td>300 KV</td><td>Femur/Tibia (lighter)</td><td><span class="badge pending">Evaluating</span></td></tr>
+              <tr><td>ODrive D5065</td><td>TBD</td><td>Coxa alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
+              <tr><td>ODrive M8325S</td><td>TBD</td><td>Coxa alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
+              <tr><td>Kraken X44</td><td>TBD</td><td>Femur/Tibia alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><em>CAD renderings of the updated leg assemblies will be added once the motor selection is finalized.</em></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Sensor Subsystem</h2>
+      <div class="card">
+        <ul>
+          <li><strong>IMU (MPU6050):</strong> 6-axis inertial measurement unit sampled at 200 Hz, providing orientation estimation (roll/pitch/yaw) and flip detection for the SafetyMonitorTask.</li>
+          <li><strong>AprilTag Camera (Raspberry Pi):</strong> Downward-facing camera for AprilTag-based localization, providing pose estimates (x, y, yaw, confidence) used for calibration and autonomous navigation.</li>
+          <li><strong>Controller Inputs:</strong> Dual joysticks (direction + rotation), potentiometer (speed), and buttons (mode selection, e-stop), communicating via Bluetooth to the onboard ESP32.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Software Subsystem</h2>
+
+      <div class="figure medium">
+        <img src="../assets/images/proposal/pi_code_architecture.png" alt="Software architecture diagram showing layered design">
+        <figcaption>Figure 2: Raspberry Pi software architecture &mdash; Layer 1 (Hardware Abstraction) through Layer 4 (Control Modes).</figcaption>
+      </div>
+
+      <div class="card">
+        <h3>Raspberry Pi &mdash; Layered Python Architecture</h3>
+        <p>The Raspberry Pi runs a 4-layer software stack:</p>
+        <ul>
+          <li><strong>Layer 1 &mdash; Hardware Abstraction:</strong> <code>SerialBridge</code> (UART to ESP32: send angles, home, stop) and <code>AprilTagTracker</code> (camera-based pose estimation via downward-facing AprilTags).</li>
+          <li><strong>Layer 2 &mdash; Motion Engine:</strong> <code>MotionEngine</code> + <code>LegIK</code> &mdash; inverse kinematics solver, walk/spin/wave/tilt/height control. Shared by both manual and automated modes.</li>
+          <li><strong>Layer 3 &mdash; Calibration:</strong> <code>Calibrator</code> &mdash; uses AprilTag feedback to auto-correct walk distance and rotation accuracy.</li>
+          <li><strong>Layer 4 &mdash; Control Modes:</strong>
+            <ul>
+              <li><code>ManualController</code> &mdash; maps joystick inputs to MotionEngine calls (walk, spin, height, tilt, wave)</li>
+              <li><code>AutomatedEngine</code> &mdash; executes timed motion sequences with calibration corrections</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>ESP32 &mdash; FreeRTOS Real-Time Firmware</h3>
+        <p>The ESP32 runs FreeRTOS with 6 concurrent tasks:</p>
+        <ul>
+          <li><strong>BluetoothRxTask</strong> (high priority): Receives joystick commands from remote controller</li>
+          <li><strong>VisionRxTask</strong> (medium): Receives AprilTag pose data from Raspberry Pi via UART</li>
+          <li><strong>ImuTask</strong> (medium-high): Reads IMU at 200 Hz, computes orientation estimates</li>
+          <li><strong>ControlTask</strong> (high, periodic 100 Hz): Main control loop &mdash; determines manual vs. autonomous mode, applies stabilization, computes gait phase and IK</li>
+          <li><strong>ServoOutputTask</strong> (high): Converts joint angles to PWM signals, drives all 18 motors</li>
+          <li><strong>SafetyMonitorTask</strong> (highest): Monitors Bluetooth timeout and tilt threshold, triggers emergency stop</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Communication Protocol</h3>
+        <ul>
+          <li><strong>Pi &rarr; ESP32 (UART 115200 baud):</strong> <code>M:a0,a1,...,a17</code> (move 18 joints), <code>H:</code> (home), <code>S:</code> (stop), <code>V:speed</code> (speed), <code>Q:</code> (query)</li>
+          <li><strong>ESP32 &rarr; Pi:</strong> <code>OK</code>, <code>ERR:type</code>, <code>ST:angles</code> (status), <code>IMU:roll,pitch,yaw,ax,ay,az</code></li>
+          <li><strong>Controller &rarr; ESP32:</strong> Bluetooth at 50 Hz update rate</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Mechanical Structure</h2>
+      <div class="card">
+        <ul>
+          <li><strong>Body Shape:</strong> Rectangular platform for stable rider mounting and electronics housing</li>
+          <li><strong>Modular Design:</strong> Disassembles into &le; 7 parts for easy transport</li>
+          <li><strong>Shipping:</strong> All parts fit in a 3 ft &times; 3 ft case</li>
+          <li><strong>Payload:</strong> Supports 170 lb rider at 2&ndash;3 ft height</li>
+          <li><strong>Materials:</strong> Aluminum frame with 3D-printed components for complex geometries</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <p><em>This page will be updated with progress photos, test results, and implementation details throughout the semester.</em></p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

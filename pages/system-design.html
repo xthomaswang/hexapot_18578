@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Design | CMU Mechatronics 2026 Team 6</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="system-design.html">System Design</a></li>
+        <li><a href="implementation.html">Implementation</a></li>
+        <li><a href="performance.html">Performance</a></li>
+        <li><a href="management.html">Management</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="documents.html">Documents</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1>System Design</h1>
+    <p>Requirements, architecture, and engineering trade studies</p>
+  </header>
+
+  <main class="content">
+
+    <!-- System Requirements -->
+    <section class="section" id="system-requirements">
+      <h2>System Requirements</h2>
+      <p>The Hexapod was designed against a rigorous set of requirements spanning locomotion, physical constraints, packaging, power, and safety.</p>
+
+      <div class="req-category">
+        <h4>Locomotion &amp; Maneuvering</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>L-1</td><td>Locomotion method</td><td>Controlled through legs</td></tr>
+            <tr><td>L-2</td><td>Travel directions</td><td>At least 2 directions (forward and backward)</td></tr>
+            <tr><td>L-3</td><td>Turning radius</td><td>Zero-degree turning radius (turn in place)</td></tr>
+            <tr><td>L-4</td><td>Navigation</td><td>Navigate to a designated point within 1 minute</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="req-category">
+        <h4>Size, Weight, Payload &amp; Rider Geometry</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>S-1</td><td>Footprint</td><td>&le; 5 ft &times; 5 ft</td></tr>
+            <tr><td>S-2</td><td>Rider height</td><td>2&ndash;3 ft off the ground</td></tr>
+            <tr><td>S-3</td><td>Device weight</td><td>&lt; 150 lbs</td></tr>
+            <tr><td>S-4</td><td>Payload capacity</td><td>Carry up to 170 lbs</td></tr>
+            <tr><td>S-5</td><td>Seating</td><td>Cross-legged or standard chair seated</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="req-category">
+        <h4>Packaging &amp; Transport</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>P-1</td><td>Shipping case</td><td>3 ft &times; 3 ft case</td></tr>
+            <tr><td>P-2</td><td>Disassembly</td><td>&le; 7 parts</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="req-category">
+        <h4>Power</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>PW-1</td><td>Battery life</td><td>&ge; 30 minutes continuous operation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="req-category">
+        <h4>Safety</h4>
+        <table>
+          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>SF-1</td><td>Performance safety</td><td>Safe in a dance performance environment, no rough edges</td></tr>
+            <tr><td>SF-2</td><td>Ride smoothness</td><td>Smooth enough that rider does not need to be strapped in</td></tr>
+            <tr><td>SF-3</td><td>Emergency stop</td><td>E-stop accessible to both riders, positioned dead center</td></tr>
+            <tr><td>SF-4</td><td>Auto-shutoff</td><td>IMU-based auto shut-off if robot flips</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Functional Architecture -->
+    <section class="section" id="functional-architecture">
+      <h2>Functional Architecture</h2>
+      <p>The functional architecture decomposes the hexapod into five primary subsystems, each responsible for a distinct domain of operation.</p>
+
+      <div class="figure medium">
+        <img src="../assets/images/proposal/3_functional_architecture.png" alt="Functional Architecture Diagram">
+        <figcaption>Figure 1: Functional architecture showing the five subsystems and their interactions.</figcaption>
+      </div>
+
+      <div class="card">
+        <h3>Subsystem Descriptions</h3>
+        <ul>
+          <li><strong>Power:</strong> Distributes electrical energy from the onboard battery to all electronic and mechanical subsystems.</li>
+          <li><strong>Compute:</strong> Performs inverse kinematics calculations, state estimation using IMU data, and generates gait patterns for walking and dancing.</li>
+          <li><strong>Control:</strong> Receives user input from the wireless controller (joystick directions, speed dial, buttons) and translates these into high-level movement commands.</li>
+          <li><strong>Locomotion:</strong> Drives 18 BLDC motors (3 per leg &times; 6 legs) via ODrive controllers, converting electrical signals into physical leg motion.</li>
+          <li><strong>Mechanical System:</strong> Provides structural support for the payload (riders) and transmits forces generated by servos through leg linkages to the ground.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Cyberphysical Architecture -->
+    <section class="section" id="cyberphysical-architecture">
+      <h2>Cyberphysical Architecture</h2>
+      <p>The cyberphysical architecture maps functional subsystems onto specific hardware and software components.</p>
+
+      <div class="figure medium">
+        <img src="../assets/images/proposal/5_cyberphysical_architecture.png" alt="Cyberphysical Architecture Diagram">
+        <figcaption>Figure 2: Cyberphysical architecture showing hardware components and communication interfaces.</figcaption>
+      </div>
+
+      <div class="card">
+        <h3>Hardware Components</h3>
+        <table>
+          <thead><tr><th>Domain</th><th>Components</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Sensing</strong></td><td>IMU, Camera, E-stop Button</td><td>Orientation, visual data, emergency override</td></tr>
+            <tr><td><strong>Computation</strong></td><td>Raspberry Pi + ESP32</td><td>RPi: IK, state estimation, gait generation; ESP32: real-time servo control &amp; Bluetooth</td></tr>
+            <tr><td><strong>Actuation</strong></td><td>18 Servo Motors</td><td>Drive coxa, femur, and tibia joints on all six legs</td></tr>
+            <tr><td><strong>Power</strong></td><td>Battery + Power Distribution Board</td><td>Supply and regulate power to all subsystems</td></tr>
+            <tr><td><strong>Remote Controller</strong></td><td>ESP32, Joysticks, Potentiometer, Button</td><td>Transmit operator commands via Bluetooth</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- System Design Description -->
+    <section class="section" id="system-description">
+      <h2>System Design Description</h2>
+
+      <div class="figure medium">
+        <img src="../assets/images/proposal/6a_system_architecture.png" alt="System Architecture Diagram">
+        <figcaption>Figure 3: High-level system architecture showing integration of all subsystems.</figcaption>
+      </div>
+
+      <p><em>Updated CAD renderings of the leg assemblies will be added once motor selection is finalized.</em></p>
+
+      <div class="card">
+        <h3>Motor Control Subsystem</h3>
+        <p>18 brushless DC motors controlled via ODrive controllers, three per leg. The design uses a split motor strategy &mdash; 6 high-torque coxa motors and 12 lighter femur/tibia motors. Each leg has:</p>
+        <ul>
+          <li><strong>Coxa joint (hip yaw):</strong> Lateral rotation for turning and strafing</li>
+          <li><strong>Femur joint (hip pitch):</strong> Vertical lift for stepping</li>
+          <li><strong>Tibia joint (knee pitch):</strong> Lower leg extension for ground contact</li>
+        </ul>
+        <p>Leg segments fabricated from aluminum and 3D-printed high-strength polymer.</p>
+      </div>
+
+      <div class="card">
+        <h3>Sensor Subsystem</h3>
+        <ul>
+          <li><strong>IMU (MPU6050):</strong> 6-axis accelerometer/gyroscope for orientation and flip detection</li>
+          <li><strong>Camera:</strong> Forward-facing on Raspberry Pi for potential CV integration</li>
+          <li><strong>Joysticks:</strong> Two analog joysticks for X/Y directional input</li>
+          <li><strong>Potentiometer:</strong> Continuous speed control dial</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Software Integration Subsystem</h3>
+        <ul>
+          <li><strong>IK Engine:</strong> Geometric solver converting foot positions to joint angles</li>
+          <li><strong>State Estimation:</strong> IMU fusion for orientation and unsafe-condition detection</li>
+          <li><strong>Gait Generation:</strong> Tripod gait (fast), wave gait (stable), custom dance gaits</li>
+          <li><strong>Bluetooth Communication:</strong> Bidirectional link between controller and onboard system</li>
+        </ul>
+        <p>Layered architecture: Communication Layer (Bluetooth I/O) &rarr; Control Layer (commands + sensor data) &rarr; Execution Layer (IK + servo driving).</p>
+      </div>
+    </section>
+
+    <!-- Design Trade Studies -->
+    <section class="section" id="trade-studies">
+      <h2>Design Trade Studies</h2>
+
+      <div class="card">
+        <h3>Leg Configuration: 2 DOF vs. 3 DOF</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4a_2vs3DOF.png" alt="2 DOF vs 3 DOF comparison">
+          <figcaption>Figure 5: 2 DOF (top) vs. 3 DOF (bottom) leg configurations.</figcaption>
+        </div>
+        <table>
+          <thead><tr><th>Criterion</th><th>2 DOF</th><th>3 DOF</th></tr></thead>
+          <tbody>
+            <tr><td>Zero-degree turning</td><td>Not achievable</td><td>Fully supported</td></tr>
+            <tr><td>Lateral movement</td><td>Limited</td><td>Omnidirectional</td></tr>
+            <tr><td>Complexity</td><td>Simpler (12 motors)</td><td>More complex (18 motors)</td></tr>
+            <tr><td>Dance expressiveness</td><td>Restricted</td><td>Highly expressive</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Decision: 3 DOF.</strong> Zero-degree turning radius is a hard requirement, and lateral movement is essential for dance. The added complexity is justified.</p>
+      </div>
+
+      <div class="card">
+        <h3>Body Shape: Hexagonal vs. Rectangular</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4b_rectangleVShexagon.png" alt="Hexagonal vs Rectangular body">
+          <figcaption>Figure 6: Rectangular (top) vs. hexagonal (bottom) body shapes.</figcaption>
+        </div>
+        <table>
+          <thead><tr><th>Criterion</th><th>Hexagonal</th><th>Rectangular</th></tr></thead>
+          <tbody>
+            <tr><td>Dual-rider seating</td><td>Awkward layout</td><td>Natural arrangement</td></tr>
+            <tr><td>Manufacturing</td><td>Angled cuts, harder</td><td>Right-angle, easier</td></tr>
+            <tr><td>Internal volume</td><td>Less usable space</td><td>More usable space</td></tr>
+            <tr><td>Transportability</td><td>Wider profile</td><td>Fits 3x3ft constraint</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Decision: Rectangular.</strong> Better for dual-rider seating, easier manufacturing, and fits the shipping constraint.</p>
+      </div>
+
+      <div class="card">
+        <h3>Microcontroller: Arduino vs. ESP32 vs. STM32</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4c_microcontroller_options.png" alt="Microcontroller options">
+          <figcaption>Figure 7: Arduino (top), ESP32 (middle), STM32 (bottom).</figcaption>
+        </div>
+        <table>
+          <thead><tr><th>Criterion</th><th>Arduino</th><th>ESP32</th><th>STM32</th></tr></thead>
+          <tbody>
+            <tr><td>Processing power</td><td>Low (8-bit AVR)</td><td>Moderate (dual-core 240MHz)</td><td>High (ARM Cortex-M)</td></tr>
+            <tr><td>Wireless (Bluetooth)</td><td>External module</td><td>Built-in BLE &amp; Wi-Fi</td><td>External module</td></tr>
+            <tr><td>PWM channels</td><td>Limited</td><td>16 channels</td><td>Many channels</td></tr>
+            <tr><td>Cost</td><td>Low</td><td>Low</td><td>Moderate</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Decision: ESP32 + Raspberry Pi.</strong> ESP32 provides built-in Bluetooth and servo control; RPi handles IK, state estimation, and gait generation.</p>
+      </div>
+
+      <div class="card">
+        <h3>Controller: Custom vs. Premade (Xbox/PS)</h3>
+        <div class="figure small">
+          <img src="../assets/images/proposal/4d_controller_options.png" alt="Controller options">
+          <figcaption>Figure 8: Premade Xbox (top) vs. custom controller (bottom).</figcaption>
+        </div>
+        <table>
+          <thead><tr><th>Criterion</th><th>Custom</th><th>Premade (Xbox/PS)</th></tr></thead>
+          <tbody>
+            <tr><td>Input customization</td><td>Fully tailored (joysticks, pot, buttons)</td><td>Generic layout</td></tr>
+            <tr><td>Bluetooth integration</td><td>Direct ESP32-to-ESP32, low latency</td><td>Standard HID, may have latency</td></tr>
+            <tr><td>Development effort</td><td>Higher (PCB, firmware)</td><td>Lower (off-the-shelf)</td></tr>
+            <tr><td>Reliability</td><td>Dedicated, no unwanted features</td><td>May have connectivity quirks</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Decision: Custom controller.</strong> Hexapod-specific controls (gait selection, speed dial) and reliable ESP32-to-ESP32 link.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
