@@ -33,9 +33,27 @@
     <h1>Hexapod <span>Dancing Robot</span></h1>
     <p class="subtitle">A six-legged, human-rideable robot built for dance performance</p>
     <p class="course-info">CMU Mechatronic Design (18-578 / 16-778 / 24-778) | Spring 2026 | Team 6</p>
-    <div class="hero-images">
-      <img src="assets/images/proposal/1_hexapod_sketch.png" alt="Hexapod concept sketch">
-      <img src="assets/images/proposal/1_controller_sketch.png" alt="Controller concept sketch">
+    <div class="hero-carousel">
+      <div class="carousel-track">
+        <div class="carousel-slide" data-index="0">
+          <img src="assets/images/proposal/1_hexapod_sketch.png" alt="Hexapod concept sketch">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Hexapod Concept Sketch</p>
+        </div>
+        <div class="carousel-slide" data-index="1">
+          <img src="assets/images/cad/CAD.png" alt="CAD rendering of the hexapod robot">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">CAD Rendering</p>
+        </div>
+        <div class="carousel-slide" data-index="2">
+          <img src="assets/images/proposal/1_controller_sketch.png" alt="Controller concept sketch">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Controller Concept Sketch</p>
+        </div>
+      </div>
+      <button class="carousel-btn carousel-prev" aria-label="Previous slide">&#10094;</button>
+      <button class="carousel-btn carousel-next" aria-label="Next slide">&#10095;</button>
+      <div class="carousel-dots"></div>
     </div>
   </section>
 
