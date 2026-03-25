@@ -29,35 +29,99 @@
 
   <header class="page-header">
     <h1>Media</h1>
-    <p>Videos, photos, and project gallery</p>
+    <p>Photos and simulation captures documenting the project’s current build state</p>
   </header>
 
   <main class="content">
-
     <section class="section">
       <h2>Project Video</h2>
-      <p>The final system video (2&ndash;3 minutes) will be posted here and on YouTube. It will show the full system at peak capacity, give an overview of the design, and highlight the main subsystems.</p>
-      <div style="position: relative; width: 100%; padding-bottom: 56.25%; background: var(--gray-300); border-radius: var(--radius); overflow: hidden; margin-top: 1rem;">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; color: var(--gray-500);">
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          <p style="margin-top: 1rem; font-size: 1.25rem; font-weight: 600;">Video Coming Soon</p>
-          <p style="font-size: 0.9rem;">Will be posted to YouTube: "CMU Mechatronics 2026: Team 6 &mdash; Hexapod Dancing Robot"</p>
+      <p>The edited final video has not been uploaded yet. Once it is available, this page will host the embedded video alongside the latest walking and subsystem-demo clips.</p>
+      <div class="callout">
+        <p>Until the final video is posted, this gallery serves as the visual project log for recent demos and build milestones.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Simulation Gallery</h2>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/simulation/mujoco-stand-front.png" alt="MuJoCo standing pose">
+          <figcaption>MuJoCo standing pose used as the baseline stable keyframe.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/simulation/mujoco-gait-phase-1.png" alt="MuJoCo gait phase 1">
+          <figcaption>Tripod gait phase 1 with one support tripod on the ground.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/simulation/mujoco-gait-phase-2.png" alt="MuJoCo gait phase 2">
+          <figcaption>Tripod gait phase 2 with the support groups swapped.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/simulation/mujoco-gait-topdown.png" alt="MuJoCo top-down gait view">
+          <figcaption>Top-down simulation view for inspecting body geometry and stride spacing.</figcaption>
         </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Picture Gallery</h2>
-      <div class="gallery-grid">
-        <img src="../assets/images/proposal/1_hexapod_sketch.png" alt="Hexapod concept sketch">
-        <img src="../assets/images/proposal/1_controller_sketch.png" alt="Controller concept sketch">
-        <img src="../assets/images/proposal/6a_system_architecture.png" alt="System architecture">
-        <img src="../assets/images/proposal/pi_code_architecture.png" alt="Software architecture diagram">
-        <img src="../assets/images/gallery/project_image.png" alt="Project progress">
+      <h2>Hardware Integration Gallery</h2>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype">
+          <figcaption>Physical single-leg prototype used to validate geometry and assembly.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/single-leg-bench-test.png" alt="Single leg bench test">
+          <figcaption>Bench demonstration of gait-controlled motion on a single physical leg.</figcaption>
+        </div>
       </div>
-      <p class="mt-2"><em>More photos will be added throughout the semester as the project progresses.</em></p>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/progress/motors-power-wiring-bench.jpg" alt="Wiring bench">
+          <figcaption>Motor, power, and PWM hardware on the wiring bench.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/esp32-controller-breadboard.jpg" alt="ESP32 breadboard controller">
+          <figcaption>ESP32 controller prototype used during embedded integration tests.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/progress/s6510-bracket.png" alt="Servo bracket">
+          <figcaption>Updated servo bracket fit for the current actuation hardware.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/full-hexapod-tripod-demo.png" alt="Full hexapod controller demo">
+          <figcaption>Software-side full-body tripod demo built on the shared gait engine.</figcaption>
+        </div>
+      </div>
     </section>
 
+    <section class="section">
+      <h2>Perception &amp; Control Gallery</h2>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/progress/raspberry-pi-camera-module.jpg" alt="Raspberry Pi camera module setup">
+          <figcaption>Raspberry Pi 5 with camera module for onboard vision work.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/raspi-apriltag-detection.png" alt="AprilTag detection on Raspberry Pi">
+          <figcaption>Live AprilTag detection on the Pi 5, providing the basis for calibration and localization.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure">
+          <img src="../assets/images/progress/single-leg-ik-demo.png" alt="Single leg IK demo">
+          <figcaption>Single-leg IK visualization used to debug trajectories and servo angle mapping.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/controller-demo.png" alt="Controller demo">
+          <figcaption>Controller-oriented simulation validating the command path for walking and turning.</figcaption>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">

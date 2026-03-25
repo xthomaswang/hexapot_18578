@@ -29,67 +29,63 @@
 
   <header class="page-header">
     <h1>Project Management</h1>
-    <p>Schedule, budget, and issue tracking</p>
+    <p>Milestones, procurement status, and the issue log used to manage integration risk</p>
   </header>
 
   <main class="content">
-
-    <!-- Schedule -->
     <section class="section">
       <h2>Schedule</h2>
-      <p>Project Gantt chart for Spring 2026. Pre-spring break: individual subsystem development (CAD, firmware, sensors). Post-spring break: integration and full system testing.</p>
+      <p>The semester schedule is organized around progressive system demos. Recent work has focused on moving from procurement and design into simulation, bench hardware, and vision validation.</p>
       <div class="figure">
-        <img src="../assets/images/proposal/7_timeline.png" alt="Project Gantt chart">
-        <figcaption>Figure 1: Project Gantt Chart &mdash; Spring 2026.</figcaption>
+        <img src="../assets/images/proposal/7_timeline.png" alt="Project timeline">
+        <figcaption>Figure 1: Team timeline from proposal through final integration and public presentation.</figcaption>
       </div>
     </section>
 
-    <!-- Budget / Parts List -->
     <section class="section">
-      <h2>Budget / Parts List</h2>
+      <h2>Milestone Tracker</h2>
       <div class="table-wrapper">
         <table>
           <thead>
-            <tr><th>Subsystem</th><th>Item</th><th>Unit Cost</th><th>Qty</th><th>Total</th></tr>
+            <tr><th>Milestone</th><th>Date</th><th>Main Deliverables</th><th>Status</th></tr>
           </thead>
           <tbody>
-            <tr><td rowspan="2">Actuation</td><td>D845WP Servo (Hitec)</td><td>$134.99</td><td>18</td><td>$2,429.82</td></tr>
-            <tr><td>PCA9685 PWM Driver Board</td><td>$8.00</td><td>3</td><td>$24.00</td></tr>
-            <tr><td rowspan="3">Compute</td><td>Raspberry Pi 4 (4GB)</td><td>$55.00</td><td>1</td><td>$55.00</td></tr>
-            <tr><td>ESP32 DevKit</td><td>$10.00</td><td>2</td><td>$20.00</td></tr>
-            <tr><td>Pi Camera Module v2</td><td>$25.00</td><td>1</td><td>$25.00</td></tr>
-            <tr><td>Sensing</td><td>IMU (MPU6050)</td><td>$5.00</td><td>1</td><td>$5.00</td></tr>
-            <tr><td rowspan="5">Power</td><td>Zeee 2S 7.4V 5200mAh LiPo</td><td>$19.50</td><td>4</td><td>$78.00</td></tr>
-            <tr><td>LiPo Charger (iMAX B6)</td><td>$28.00</td><td>1</td><td>$28.00</td></tr>
-            <tr><td>Power Distribution Bus Bar</td><td>$5.00</td><td>1</td><td>$5.00</td></tr>
-            <tr><td>LM2596 Buck Converter (5V)</td><td>$1.00</td><td>2</td><td>$2.00</td></tr>
-            <tr><td>9V Battery (controller)</td><td>$4.00</td><td>1</td><td>$4.00</td></tr>
-            <tr><td rowspan="5">Mechanical</td><td>6061-T6 Al Square Tube (1"x1", 8ft)</td><td>$32.86</td><td>6</td><td>$197.16</td></tr>
-            <tr><td>Nylon CF Filament (1kg)</td><td>$67.00</td><td>1</td><td>$67.00</td></tr>
-            <tr><td>608-2RS Bearings (10-pack)</td><td>$7.00</td><td>2</td><td>$14.00</td></tr>
-            <tr><td>Fasteners (M3&ndash;M6 Kit)</td><td>$15.00</td><td>1</td><td>$15.00</td></tr>
-            <tr><td>Rubber Foot Tips, Threadlocker</td><td>$12.00</td><td>1</td><td>$12.00</td></tr>
-            <tr><td rowspan="3">Controller</td><td>Joystick Modules, Pot., Buttons</td><td>$20.00</td><td>1</td><td>$20.00</td></tr>
-            <tr><td>ABS Project Enclosure</td><td>$9.00</td><td>1</td><td>$9.00</td></tr>
-            <tr><td>Emergency Stop Button (22mm)</td><td>$7.00</td><td>1</td><td>$7.00</td></tr>
-            <tr><td rowspan="2">Misc.</td><td>Wiring, Connectors, Heat Shrink</td><td>$40.00</td><td>1</td><td>$40.00</td></tr>
-            <tr><td>Servo Extension Cables (20-pack)</td><td>$14.00</td><td>1</td><td>$14.00</td></tr>
+            <tr><td>System Demo 2</td><td>February 26, 2026</td><td>Procurement list finalized, wiring review completed, subsystem purchasing aligned</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>System Demo 3</td><td>March 9, 2026</td><td>Single-leg IK demo, controller demo, physical leg prototype, near-final CAD</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>System Demo 4</td><td>March 16, 2026</td><td>MuJoCo simulation, Pi camera bring-up, wiring bench, controller-to-servo bench work</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>System Demo 5</td><td>March 23, 2026</td><td>AprilTag detection on Pi 5, single-leg hardware gait path, more leg hardware assembled</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>System Demo 6</td><td>April 6, 2026</td><td>Wiring cleanup, Pi-to-ESP32 integration, broader multi-leg hardware bring-up</td><td><span class="badge in-progress">In Progress</span></td></tr>
+            <tr><td>Final Integrated Demo</td><td>April 15, 2026</td><td>Full-system walking / performance behavior with verified subsystem integration</td><td><span class="badge pending">Pending</span></td></tr>
           </tbody>
-          <tfoot>
-            <tr><td colspan="4"><strong>Parts Subtotal</strong></td><td><strong>$3,095.98</strong></td></tr>
-            <tr><td colspan="4">Sales Tax (7%, Pittsburgh PA)</td><td>$216.72</td></tr>
-            <tr><td colspan="4">Estimated Shipping</td><td>$50.00</td></tr>
-            <tr><td colspan="4">Emergency Fund</td><td>$137.30</td></tr>
-            <tr><td colspan="4"><strong>Total Estimated Cost</strong></td><td><strong>$3,500.00</strong></td></tr>
-          </tfoot>
         </table>
       </div>
     </section>
 
-    <!-- Issues Log -->
     <section class="section">
-      <h2>Issues Log</h2>
-      <p>This log is maintained throughout the semester. Each design issue is recorded as it is discovered.</p>
+      <h2>Current Procurement Snapshot</h2>
+      <div class="callout">
+        <p>The exact shopping sheet continues to evolve as servo hardware, brackets, and wiring details are refined. The table below reflects the current architecture rather than the earliest proposal assumptions.</p>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Subsystem</th><th>Current Selection</th><th>Management Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Actuation</td><td>High-torque servo set for six 3-DOF legs, plus PCA9685 PWM boards and extension cabling</td><td>Main integration risk is clean routing and sufficient current distribution</td></tr>
+            <tr><td>Compute</td><td>Raspberry Pi 5 with active cooling</td><td>Chosen for enough headroom to run perception and gait software together</td></tr>
+            <tr><td>Perception</td><td>Pi camera module and IMU</td><td>Already supporting streaming and AprilTag detection bring-up</td></tr>
+            <tr><td>Embedded Control</td><td>ESP32 control layer and wireless input prototype</td><td>Bench-tested; next step is tighter integration with the Pi and final wiring</td></tr>
+            <tr><td>Mechanical</td><td>Rectangular chassis, servo brackets, leg links, bearings, and fasteners</td><td>Bracket revision and fit validation completed on single-leg hardware</td></tr>
+            <tr><td>Power</td><td>Battery, regulators, distribution wiring, and connectors</td><td>Needs final cleaned-up architecture before full multi-leg power tests</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Issue Log</h2>
+      <p>The issue log records concrete integration problems discovered during staged demos and how the team resolved them.</p>
       <div class="table-wrapper">
         <table>
           <thead>
@@ -97,39 +93,78 @@
               <th>Issue #</th>
               <th>Date Found</th>
               <th>Date Fixed</th>
-              <th>Changed By</th>
               <th>Origin</th>
               <th>Description</th>
               <th>Resolution</th>
-              <th>Artifacts Changed</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>1</td>
-              <td>2026-02-10</td>
-              <td>2026-02-14</td>
-              <td>Team 6</td>
-              <td>Design Review</td>
-              <td>Initial servo torque margin analysis needed for full leg extension under dynamic load</td>
-              <td>Verified D845WP torque (694 oz-in) sufficient for leg geometry; documented safety margin</td>
-              <td>Leg CAD assembly, IK parameters</td>
+              <td>2026-03-09</td>
+              <td>2026-03-09</td>
+              <td>IK visualization</td>
+              <td>Right-side leg coordinate transforms were mirrored, causing incorrect gait behavior.</td>
+              <td>Corrected body-to-leg transform handling and verified with the controller demo and single-leg visualization.</td>
             </tr>
             <tr>
               <td>2</td>
+              <td>2026-03-16</td>
+              <td>2026-03-16</td>
+              <td>MuJoCo bring-up</td>
+              <td>Tibia angle convention between the IK solver and MuJoCo caused unstable initial poses.</td>
+              <td>Standardized the tibia conversion path and updated the standing keyframe / actuator command mapping.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>2026-03-23</td>
+              <td>2026-03-23</td>
+              <td>Pi camera integration</td>
+              <td>Camera frames arrived in the wrong color format, so AprilTag detection silently failed.</td>
+              <td>Explicitly configured the Pi camera pipeline for OpenCV-friendly output before running detection.</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>2026-03-23</td>
+              <td>2026-03-23</td>
+              <td>Bench hardware test</td>
+              <td>A femur servo direction was inverted relative to the software configuration.</td>
+              <td>Updated servo direction settings in configuration and revalidated the single-leg bench controller.</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>2026-03-25</td>
               <td>&mdash;</td>
-              <td>&mdash;</td>
-              <td>&mdash;</td>
-              <td>&mdash;</td>
-              <td><em>New issues will be added as they arise</em></td>
-              <td>&mdash;</td>
-              <td>&mdash;</td>
+              <td>System integration planning</td>
+              <td>Full-body wiring and connector management remain the main blocker for multi-leg hardware walking.</td>
+              <td>Open; currently being addressed as part of the next integration milestone.</td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
 
+    <section class="section">
+      <h2>Near-Term Focus</h2>
+      <div class="status-grid">
+        <div class="status-card">
+          <h3>Wiring Cleanup</h3>
+          <p>Move from bench-heavy routing to a cleaner harness that supports multi-leg testing without intermittent faults.</p>
+        </div>
+        <div class="status-card">
+          <h3>Pi to ESP32 Interface</h3>
+          <p>Lock down the production command path between high-level gait software and real hardware outputs.</p>
+        </div>
+        <div class="status-card">
+          <h3>Multi-Leg Bring-Up</h3>
+          <p>Extend current single-leg validation to broader multi-leg coordination on the physical frame.</p>
+        </div>
+        <div class="status-card">
+          <h3>Verification Discipline</h3>
+          <p>Keep simulation, hardware, and website documentation synchronized so the lab workbook reflects the real build state.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">

@@ -29,45 +29,170 @@
 
   <header class="page-header">
     <h1>System Performance</h1>
-    <p>Testing results and performance against requirements</p>
+    <p>Evidence-backed status from simulation, bench tests, and current subsystem demos</p>
   </header>
 
   <main class="content">
+    <section class="section">
+      <h2>Performance Snapshot</h2>
+      <div class="callout">
+        <p><strong>Important:</strong> This page distinguishes between simulation evidence, bench-test evidence, and full-system hardware verification. Items stay pending until the team has measured them on the integrated robot.</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">AprilTag Rate</div>
+          <div class="kpi-value">20&ndash;25 fps</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Physical Legs Under Gait</div>
+          <div class="kpi-value">1</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Legs Simulated</div>
+          <div class="kpi-value">6</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Servo Channels Addressed</div>
+          <div class="kpi-value">18</div>
+        </div>
+      </div>
+    </section>
 
     <section class="section">
-      <h2>Performance Requirements</h2>
-      <p>The table below tracks each system-level requirement against its target value and current status.</p>
+      <h2>Verification Matrix</h2>
       <div class="table-wrapper">
         <table>
           <thead>
-            <tr><th>Requirement</th><th>Target</th><th>Status</th></tr>
+            <tr><th>Requirement / Test</th><th>Target</th><th>Current Evidence</th><th>Status</th></tr>
           </thead>
           <tbody>
-            <tr><td>Forward/Backward travel</td><td>2+ directions</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Zero-degree turning</td><td>Turn in place</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Navigate to point</td><td>Within 1 minute</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Footprint</td><td>&le; 5 ft &times; 5 ft</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Rider height</td><td>2&ndash;3 ft off ground</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Robot weight</td><td>&lt; 150 lbs</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Payload capacity</td><td>170 lbs</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Battery life</td><td>&ge; 30 min</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Disassembly</td><td>&le; 7 parts</td><td><span class="badge pending">Pending</span></td></tr>
-            <tr><td>Shipping size</td><td>3 ft &times; 3 ft case</td><td><span class="badge pending">Pending</span></td></tr>
+            <tr>
+              <td>Single-leg inverse kinematics</td>
+              <td>Compute stable 3-DOF joint targets for a commanded step trajectory</td>
+              <td>Interactive single-leg demo and hardware-ready PWM mapping implemented</td>
+              <td><span class="badge complete">Complete</span></td>
+            </tr>
+            <tr>
+              <td>Six-leg coordinated gait generation</td>
+              <td>Tripod gait with alternating support groups</td>
+              <td>MuJoCo simulation shows alternating tripod phases and stable standing keyframe</td>
+              <td><span class="badge complete">Complete</span></td>
+            </tr>
+            <tr>
+              <td>Controller-to-servo command path</td>
+              <td>Drive physical motion from the embedded stack</td>
+              <td>Bench-tested through ESP32 / PWM stack on a single leg</td>
+              <td><span class="badge in-progress">In Progress</span></td>
+            </tr>
+            <tr>
+              <td>Onboard vision</td>
+              <td>Detect calibration targets in real time on the Pi</td>
+              <td>OpenCV AprilTag pipeline running on Raspberry Pi 5 at roughly 20&ndash;25 fps</td>
+              <td><span class="badge complete">Complete</span></td>
+            </tr>
+            <tr>
+              <td>Forward / backward walking on full robot</td>
+              <td>Repeatable physical walking demonstration</td>
+              <td>Not yet demonstrated on the assembled six-leg platform</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Turn in place on full robot</td>
+              <td>Physical turning demo</td>
+              <td>Supported in software and simulation; pending full hardware integration</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Payload support</td>
+              <td>170 lb rider / payload target</td>
+              <td>Final load test not yet performed</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Ride height</td>
+              <td>2&ndash;3 ft above ground</td>
+              <td>Final assembly not yet measured</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Battery endurance</td>
+              <td>&ge; 30 minutes continuous operation</td>
+              <td>Endurance test not yet run on the integrated system</td>
+              <td><span class="badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Safety interlock behavior</td>
+              <td>Detect unsafe state and stop motion</td>
+              <td>Safety architecture defined; integrated full-system validation still pending</td>
+              <td><span class="badge in-progress">In Progress</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <section class="section">
-      <h2>Component Testing</h2>
-      <p>Individual component and subsystem test results will be documented here as testing progresses.</p>
+      <h2>Current Evidence</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Simulation Stability</h3>
+          <p>MuJoCo provides the strongest evidence for six-leg gait behavior so far. The full robot can be initialized into a standing pose and stepped through alternating tripod phases with contact and gravity modeled.</p>
+          <div class="figure">
+            <img src="../assets/images/simulation/mujoco-gait-phase-1.png" alt="MuJoCo gait phase 1">
+            <figcaption>Figure 1: Tripod gait phase 1 in MuJoCo.</figcaption>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Bench Hardware Actuation</h3>
+          <p>The single-leg bench test is the strongest current hardware validation. It confirms that the control stack can command a real servo-driven mechanism, even though the full robot is not yet assembled.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/single-leg-bench-test.png" alt="Single leg bench performance test">
+            <figcaption>Figure 2: Bench evidence for physical gait execution on one leg.</figcaption>
+          </div>
+        </div>
+      </div>
+
+      <div class="split-grid">
+        <div class="card">
+          <h3>Camera Throughput</h3>
+          <p>The AprilTag detector is already operating at a practical rate on the Pi 5, which gives the team a solid base for pose estimation and calibration experiments.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/raspi-apriltag-detection.png" alt="AprilTag detection performance">
+            <figcaption>Figure 3: AprilTag detection test setup running on the Raspberry Pi 5.</figcaption>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Geometry Consistency</h3>
+          <p>The same leg dimensions and mounting assumptions are now shared across CAD, IK, and MuJoCo. This reduces the risk of testing against mismatched geometry.</p>
+          <div class="figure">
+            <img src="../assets/images/simulation/mujoco-gait-topdown.png" alt="Top-down view of MuJoCo gait">
+            <figcaption>Figure 4: Top-down simulation view used to inspect body geometry and gait spacing.</figcaption>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="section">
-      <h2>Full System Performance</h2>
-      <p>End-of-semester full system performance evaluation will be documented here.</p>
+      <h2>Open Performance Work</h2>
+      <div class="status-grid">
+        <div class="status-card">
+          <h3>Six-Leg Walking Demo</h3>
+          <p>Translate the working gait stack from simulation and single-leg tests onto the integrated chassis.</p>
+        </div>
+        <div class="status-card">
+          <h3>Load &amp; Height Measurement</h3>
+          <p>Measure real ride height and perform static / dynamic payload checks on the final frame.</p>
+        </div>
+        <div class="status-card">
+          <h3>Power-Endurance Testing</h3>
+          <p>Run timed trials once the final battery and wiring architecture are stable.</p>
+        </div>
+        <div class="status-card">
+          <h3>Safety Regression Checks</h3>
+          <p>Verify e-stop and orientation-triggered shutdown behavior on the complete robot, not just in subsystem isolation.</p>
+        </div>
+      </div>
     </section>
-
   </main>
 
   <footer class="footer">

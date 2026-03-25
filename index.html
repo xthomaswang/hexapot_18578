@@ -8,7 +8,6 @@
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="navbar">
     <div class="container">
       <a href="index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
@@ -28,27 +27,31 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <h1>Hexapod <span>Dancing Robot</span></h1>
-    <p class="subtitle">A six-legged, human-rideable robot built for dance performance</p>
+    <p class="subtitle">A six-legged performance robot with servo actuation, onboard vision, and tripod gait control</p>
     <p class="course-info">CMU Mechatronic Design (18-578 / 16-778 / 24-778) | Spring 2026 | Team 6</p>
     <div class="hero-carousel">
       <div class="carousel-track">
         <div class="carousel-slide" data-index="0">
-          <img src="assets/images/proposal/1_hexapod_sketch.png" alt="Hexapod concept sketch">
-          <div class="carousel-overlay"></div>
-          <p class="carousel-caption">Hexapod Concept Sketch</p>
-        </div>
-        <div class="carousel-slide" data-index="1">
           <img src="assets/images/cad/CAD.png" alt="CAD rendering of the hexapod robot">
           <div class="carousel-overlay"></div>
-          <p class="carousel-caption">CAD Rendering</p>
+          <p class="carousel-caption">Current CAD layout for the rectangular six-leg platform</p>
+        </div>
+        <div class="carousel-slide" data-index="1">
+          <img src="assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype on the workbench">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Physical single-leg prototype used for early fit and motion validation</p>
         </div>
         <div class="carousel-slide" data-index="2">
-          <img src="assets/images/proposal/1_controller_sketch.png" alt="Controller concept sketch">
+          <img src="assets/images/simulation/mujoco-gait-topdown.png" alt="MuJoCo top-down view of the hexapod gait">
           <div class="carousel-overlay"></div>
-          <p class="carousel-caption">Controller Concept Sketch</p>
+          <p class="carousel-caption">MuJoCo simulation used to validate stance stability and gait phasing</p>
+        </div>
+        <div class="carousel-slide" data-index="3">
+          <img src="assets/images/progress/raspi-apriltag-detection.png" alt="Raspberry Pi AprilTag detection test">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Raspberry Pi 5 camera pipeline detecting AprilTags in real time</p>
         </div>
       </div>
       <button class="carousel-btn carousel-prev" aria-label="Previous slide">&#10094;</button>
@@ -57,63 +60,100 @@
     </div>
   </section>
 
-  <!-- Problem Description -->
   <main class="content">
-    <div class="section">
+    <section class="section">
       <h2>Problem Description</h2>
       <p>
-        Imagine two performers seated atop a giant, six-legged robot, dancing in sync with the machine beneath them.
-        Our Hexapod Dancing Robot is a rectangular-body hexapod featuring <strong>6 legs with 3 degrees of freedom each</strong>,
-        designed to carry two riders while performing choreographed walking and dancing movements.
+        Team 6 is building a large hexapod robot that can perform choreographed walking and dance-like motions
+        while remaining stable, safe, and modular enough to transport between demos. The project combines
+        locomotion, embedded control, perception, and mechanical integration in a single performance platform.
       </p>
       <p>
-        The hexapod allows two people to sit and perform on both sides, with an emergency stop positioned dead center
-        for quick access by both riders. The robot features an <strong>IMU-based flip detection</strong> system that automatically
-        shuts down the robot if it tips beyond a safe angle, ensuring safety in a live performance environment.
-      </p>
-      <p>
-        Controlled via a <strong>custom wireless controller</strong> with joysticks and a speed dial communicating over Bluetooth
-        to an onboard Raspberry Pi, the hexapod is designed for modularity (ships in a 3 ft x 3 ft case),
-        robust construction (supports a 170 lb rider at 2-3 ft off the ground), and expressive motion
-        (tripod gait, wave gait, and custom dance gaits).
+        Our current architecture uses <strong>18 high-torque servos</strong> across six 3-DOF legs,
+        an <strong>ESP32</strong> for low-level real-time control, and a <strong>Raspberry Pi 5</strong> for
+        gait generation, calibration, and camera-based computer vision. The robot also includes an
+        <strong>IMU, wireless control path, emergency stop, and AprilTag-ready camera stack</strong>
+        to support safe manual operation and future autonomous alignment tasks.
       </p>
 
       <div class="figure medium">
-        <img src="assets/images/proposal/6a_system_architecture.png" alt="System Architecture Overview">
-        <figcaption>Figure 1: System Architecture Overview showing the Software Integration & Communication Layer coordinating between Sensor, Motor Control, and Mechanical subsystems.</figcaption>
+        <img src="assets/images/proposal/6a_system_architecture.png" alt="System architecture overview">
+        <figcaption>Figure 1: High-level system architecture linking perception, control, actuation, power, and structure.</figcaption>
       </div>
-    </div>
+    </section>
 
-    <div class="section">
-      <h2>Key Features</h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
-        <div class="card">
-          <h3>18 BLDC Motors</h3>
-          <p>ODrive-controlled brushless DC motors &mdash; 6 high-torque coxa motors and 12 lighter femur/tibia motors &mdash; powering 3 DOF per leg.</p>
+    <section class="section">
+      <h2>Current Snapshot</h2>
+      <div class="status-grid">
+        <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>Single-Leg IK Pipeline</h3>
+          <p>A full 3-DOF inverse kinematics solver drives a single-leg demo and generates hardware-ready servo commands.</p>
         </div>
-        <div class="card">
-          <h3>Dual-Rider Platform</h3>
-          <p>Supports two performers seated cross-legged or in standard chair position, 2-3 ft off the ground.</p>
+        <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>MuJoCo Gait Simulation</h3>
+          <p>The full six-leg robot is simulated with tripod gait phasing, gravity, contact, and joint limits.</p>
         </div>
-        <div class="card">
-          <h3>Custom Controller</h3>
-          <p>Wireless Bluetooth controller with dual joysticks, potentiometer speed dial, and mode selection buttons.</p>
+        <div class="status-card">
+          <span class="badge in-progress">In Progress</span>
+          <h3>Hardware Integration</h3>
+          <p>Bench tests have validated one physical leg, servo wiring, PWM control, and ESP32 integration.</p>
         </div>
-        <div class="card">
-          <h3>Safety First</h3>
-          <p>Emergency stop accessible to both riders, IMU-based auto-shutoff on flip, smooth edges throughout.</p>
+        <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>AprilTag Vision Bring-Up</h3>
+          <p>The Raspberry Pi 5 camera stack detects multiple AprilTags in real time and is ready for pose estimation work.</p>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="section">
+      <h2>Key Features</h2>
+      <div class="status-grid">
+        <div class="status-card">
+          <h3>18 Servo Joints</h3>
+          <p>Six legs with coxa, femur, and tibia joints provide the maneuverability needed for tripod gait and expressive motion.</p>
+        </div>
+        <div class="status-card">
+          <h3>Split Compute Architecture</h3>
+          <p>The Raspberry Pi handles planning and perception while the ESP32 handles timing-sensitive PWM output and control logic.</p>
+        </div>
+        <div class="status-card">
+          <h3>Physics-Backed Development</h3>
+          <p>MuJoCo simulation lets the team tune geometry, gait timing, and stability before committing changes to hardware.</p>
+        </div>
+        <div class="status-card">
+          <h3>Media-Rich Lab Workbook</h3>
+          <p>The Documents and Media pages capture proposal work, ILRs, bench photos, simulations, and integration evidence.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Where To Look Next</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3><a href="pages/implementation.html">System Implementation</a></h3>
+          <p>See the current mechanical, electrical, software, and computer-vision progress with recent build photos.</p>
+        </div>
+        <div class="card">
+          <h3><a href="pages/performance.html">System Performance</a></h3>
+          <p>Review which requirements are already supported by simulation or bench tests and which remain pending full-system verification.</p>
+        </div>
+        <div class="card">
+          <h3><a href="pages/documents.html">Documents</a></h3>
+          <p>Browse the organized lab-workbook archive, including proposal files and ILR rounds 1 through 7.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <img id="lightbox-img" src="" alt="">
   </div>

@@ -29,143 +29,168 @@
 
   <header class="page-header">
     <h1>System Implementation</h1>
-    <p>Subsystem development progress and full system integration</p>
+    <p>Current build progress across mechanics, embedded control, simulation, and computer vision</p>
   </header>
 
   <main class="content">
-
     <section class="section">
-      <h2>Full System Overview</h2>
-      <p>The hexapod dancing robot is composed of four tightly integrated subsystems: <strong>Motor Control</strong>, <strong>Sensor</strong>, <strong>Software</strong>, and <strong>Mechanical</strong>. Together they enable the robot to walk, respond to rider input, maintain stability, and perform choreographed routines.</p>
-      <div class="figure medium">
-        <img src="../assets/images/proposal/6a_system_architecture.png" alt="System architecture diagram">
-        <figcaption>Figure 1: Overall system architecture showing subsystem interactions.</figcaption>
+      <h2>Implementation Summary</h2>
+      <p>The project has moved past proposal-only material and into staged subsystem validation. Core kinematics, simulation, camera bring-up, and single-leg hardware tests are all running; full six-leg hardware integration is the next major step.</p>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Joints Modeled</div>
+          <div class="kpi-value">18</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Legs Bench-Tested</div>
+          <div class="kpi-value">1</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Legs Simulated</div>
+          <div class="kpi-value">6</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">AprilTag Throughput</div>
+          <div class="kpi-value">20&ndash;25 fps</div>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Motor Control Subsystem</h2>
-      <div class="card">
-        <p>The hexapod uses <strong>18 brushless DC (BLDC) motors</strong> controlled by <strong>ODrive motor controllers</strong> &mdash; three per leg across six legs. Each leg consists of three joints:</p>
-        <ul>
-          <li><strong>Coxa</strong> &mdash; Hip yaw joint, providing lateral rotation (high-torque motor)</li>
-          <li><strong>Femur</strong> &mdash; Hip pitch joint, providing vertical lift (lighter motor)</li>
-          <li><strong>Tibia</strong> &mdash; Knee pitch joint, controlling lower leg extension (lighter motor)</li>
-        </ul>
-
-        <h3>Motor Configuration</h3>
-        <p>The motor selection uses a split strategy based on force requirements:</p>
-        <ul>
-          <li><strong>6 Coxa motors (high-torque):</strong> These bear the most load and require the highest torque output. Candidates under evaluation include the ODrive D6374 (150KV), D5065, and M8325S.</li>
-          <li><strong>12 Femur/Tibia motors (lighter):</strong> Less force is needed for the femur and tibia joints. Candidates include the ODrive D5212S (300KV) and Kraken X44.</li>
-        </ul>
-
-        <h3>Force Analysis</h3>
-        <ul>
-          <li>150 lb payload &rarr; ~20 lb effective load after wheels + friction</li>
-          <li>2 riders = ~40 lb effective load</li>
-          <li>After robot weight: ~40&ndash;50 lb total effective load</li>
-          <li>&times; 3 stall margin = 120&ndash;150 lb-force required</li>
-          <li>&times; 1.5 safety factor = 180&ndash;225 lb-force total</li>
-          <li>&divide; 6 legs = <strong>30&ndash;37.5 kg per leg</strong></li>
-        </ul>
-
-        <h3>Motor Candidates Under Evaluation</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Motor</th><th>KV Rating</th><th>Application</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>ODrive D6374</td><td>150 KV</td><td>Coxa (high-torque)</td><td><span class="badge pending">Evaluating</span></td></tr>
-              <tr><td>ODrive D5212S</td><td>300 KV</td><td>Femur/Tibia (lighter)</td><td><span class="badge pending">Evaluating</span></td></tr>
-              <tr><td>ODrive D5065</td><td>TBD</td><td>Coxa alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
-              <tr><td>ODrive M8325S</td><td>TBD</td><td>Coxa alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
-              <tr><td>Kraken X44</td><td>TBD</td><td>Femur/Tibia alternative</td><td><span class="badge pending">Evaluating</span></td></tr>
-            </tbody>
-          </table>
+      <h2>Mechanical &amp; Actuation Build</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Single-Leg Prototype</h3>
+          <p>The team built and iterated on a physical leg prototype to validate link dimensions, mounting clearances, and bracket geometry before full chassis assembly.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype on the workbench">
+            <figcaption>Figure 1: Early full-scale leg prototype used to check dimensions and assembly layout.</figcaption>
+          </div>
         </div>
+        <div class="card">
+          <h3>Servo Bracket Revision</h3>
+          <p>V2 bracket revisions improved the fit for the Spektrum S6510 servos and aligned the mounting pattern more reliably with the intended mechanical stack.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/s6510-bracket.png" alt="Servo mounted in the V2 bracket">
+            <figcaption>Figure 2: Updated bracket geometry matching the current servo packaging.</figcaption>
+          </div>
+        </div>
+      </div>
 
+      <div class="card">
+        <h3>Bench-Tested Single-Leg Motion</h3>
+        <p>A hardware test leg now executes controller-generated motion on the bench. This validates the software-to-servo pipeline: IK targets are converted into PWM commands and passed through the embedded stack to the physical actuator.</p>
         <div class="figure medium">
-          <img src="../assets/images/cad/CAD.png" alt="CAD rendering of the hexapod leg assemblies">
-          <figcaption>CAD rendering of the hexapod design.</figcaption>
+          <img src="../assets/images/progress/single-leg-bench-test.png" alt="Single leg bench test">
+          <figcaption>Figure 3: Single-leg bench setup demonstrating gait-driven servo motion.</figcaption>
         </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Sensor Subsystem</h2>
-      <div class="card">
-        <ul>
-          <li><strong>IMU (MPU6050):</strong> 6-axis inertial measurement unit sampled at 200 Hz, providing orientation estimation (roll/pitch/yaw) and flip detection for the SafetyMonitorTask.</li>
-          <li><strong>AprilTag Camera (Raspberry Pi):</strong> Downward-facing camera for AprilTag-based localization, providing pose estimates (x, y, yaw, confidence) used for calibration and autonomous navigation.</li>
-          <li><strong>Controller Inputs:</strong> Dual joysticks (direction + rotation), potentiometer (speed), and buttons (mode selection, e-stop), communicating via Bluetooth to the onboard ESP32.</li>
-        </ul>
+      <h2>Electronics &amp; Embedded Control</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Power &amp; Wiring Bench</h3>
+          <p>The team assembled a dedicated wiring bench for servo power distribution, PWM breakout hardware, and early integration checks. This setup supports incremental hardware validation before everything is routed into the final robot body.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/motors-power-wiring-bench.jpg" alt="Power and wiring bench with servos and electronics">
+            <figcaption>Figure 4: Servo, battery, and wiring bench used for power-path and control validation.</figcaption>
+          </div>
+        </div>
+        <div class="card">
+          <h3>ESP32 Control Layer</h3>
+          <p>The ESP32 currently serves as the hardware-side control layer for command handling and PWM output. Its bench setup has been used to verify communication and real servo actuation during subsystem demos.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/esp32-controller-breadboard.jpg" alt="ESP32 controller breadboard setup">
+            <figcaption>Figure 5: ESP32 prototype board used for controller and PWM signal bring-up.</figcaption>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Software Subsystem</h2>
+      <h2>Software Stack</h2>
 
       <div class="figure medium">
-        <img src="../assets/images/proposal/pi_code_architecture.png" alt="Software architecture diagram showing layered design">
-        <figcaption>Figure 2: Raspberry Pi software architecture &mdash; Layer 1 (Hardware Abstraction) through Layer 4 (Control Modes).</figcaption>
+        <img src="../assets/images/proposal/pi_code_architecture.png" alt="Software architecture diagram for the Raspberry Pi">
+        <figcaption>Figure 6: Layered Raspberry Pi software architecture for communication, motion, calibration, and control modes.</figcaption>
       </div>
 
       <div class="card">
-        <h3>Raspberry Pi &mdash; Layered Python Architecture</h3>
-        <p>The Raspberry Pi runs a 4-layer software stack:</p>
-        <ul>
-          <li><strong>Layer 1 &mdash; Hardware Abstraction:</strong> <code>SerialBridge</code> (UART to ESP32: send angles, home, stop) and <code>AprilTagTracker</code> (camera-based pose estimation via downward-facing AprilTags).</li>
-          <li><strong>Layer 2 &mdash; Motion Engine:</strong> <code>MotionEngine</code> + <code>LegIK</code> &mdash; inverse kinematics solver, walk/spin/wave/tilt/height control. Shared by both manual and automated modes.</li>
-          <li><strong>Layer 3 &mdash; Calibration:</strong> <code>Calibrator</code> &mdash; uses AprilTag feedback to auto-correct walk distance and rotation accuracy.</li>
-          <li><strong>Layer 4 &mdash; Control Modes:</strong>
-            <ul>
-              <li><code>ManualController</code> &mdash; maps joystick inputs to MotionEngine calls (walk, spin, height, tilt, wave)</li>
-              <li><code>AutomatedEngine</code> &mdash; executes timed motion sequences with calibration corrections</li>
-            </ul>
-          </li>
-        </ul>
+        <h3>Inverse Kinematics &amp; Gait Control</h3>
+        <p>The Python control stack computes coxa, femur, and tibia angles from body-relative foot targets, then maps those targets to hardware-ready servo commands. The same control logic feeds the simulation environment and the single-leg hardware controller API.</p>
       </div>
 
-      <div class="card">
-        <h3>ESP32 &mdash; FreeRTOS Real-Time Firmware</h3>
-        <p>The ESP32 runs FreeRTOS with 6 concurrent tasks:</p>
-        <ul>
-          <li><strong>BluetoothRxTask</strong> (high priority): Receives joystick commands from remote controller</li>
-          <li><strong>VisionRxTask</strong> (medium): Receives AprilTag pose data from Raspberry Pi via UART</li>
-          <li><strong>ImuTask</strong> (medium-high): Reads IMU at 200 Hz, computes orientation estimates</li>
-          <li><strong>ControlTask</strong> (high, periodic 100 Hz): Main control loop &mdash; determines manual vs. autonomous mode, applies stabilization, computes gait phase and IK</li>
-          <li><strong>ServoOutputTask</strong> (high): Converts joint angles to PWM signals, drives all 18 motors</li>
-          <li><strong>SafetyMonitorTask</strong> (highest): Monitors Bluetooth timeout and tilt threshold, triggers emergency stop</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>Communication Protocol</h3>
-        <ul>
-          <li><strong>Pi &rarr; ESP32 (UART 115200 baud):</strong> <code>M:a0,a1,...,a17</code> (move 18 joints), <code>H:</code> (home), <code>S:</code> (stop), <code>V:speed</code> (speed), <code>Q:</code> (query)</li>
-          <li><strong>ESP32 &rarr; Pi:</strong> <code>OK</code>, <code>ERR:type</code>, <code>ST:angles</code> (status), <code>IMU:roll,pitch,yaw,ax,ay,az</code></li>
-          <li><strong>Controller &rarr; ESP32:</strong> Bluetooth at 50 Hz update rate</li>
-        </ul>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Interactive IK Demo</h3>
+          <p>Before touching hardware, the team validated the stepping trajectory, servo angle mapping, and body-frame transforms using a single-leg visualization environment.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/single-leg-ik-demo.png" alt="Single leg IK demo">
+            <figcaption>Figure 7: Single-leg IK demo with stepping trajectory and live joint angles.</figcaption>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Controller-Oriented Motion Demo</h3>
+          <p>A full-body controller demo validates the command path from high-level drive inputs to synchronized multi-leg gait output.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/controller-demo.png" alt="Controller demo for the full hexapod">
+            <figcaption>Figure 8: Full-hexapod controller demo built on the shared gait and IK stack.</figcaption>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>Mechanical Structure</h2>
+      <h2>Simulation &amp; Vision Integration</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3>MuJoCo Physics Validation</h3>
+          <p>The team replaced a simple matplotlib viewer with a MuJoCo environment that models gravity, contact, joint limits, and actuator commands. This makes gait tuning much more defensible before full assembly.</p>
+          <div class="figure">
+            <img src="../assets/images/simulation/mujoco-stand-front.png" alt="MuJoCo standing pose">
+            <figcaption>Figure 9: Standing pose in MuJoCo used as the baseline keyframe for gait testing.</figcaption>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Raspberry Pi Camera Bring-Up</h3>
+          <p>The Raspberry Pi 5 camera stack was brought up first for streaming, then extended into an AprilTag detection pipeline that now runs in real time on-board.</p>
+          <div class="figure">
+            <img src="../assets/images/progress/raspberry-pi-camera-module.jpg" alt="Raspberry Pi 5 with camera module">
+            <figcaption>Figure 10: Pi 5 and camera hardware used for onboard vision development.</figcaption>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
-        <ul>
-          <li><strong>Body Shape:</strong> Rectangular platform for stable rider mounting and electronics housing</li>
-          <li><strong>Modular Design:</strong> Disassembles into &le; 7 parts for easy transport</li>
-          <li><strong>Shipping:</strong> All parts fit in a 3 ft &times; 3 ft case</li>
-          <li><strong>Payload:</strong> Supports 170 lb rider at 2&ndash;3 ft height</li>
-          <li><strong>Materials:</strong> Aluminum frame with 3D-printed components for complex geometries</li>
-        </ul>
+        <h3>AprilTag Detection Pipeline</h3>
+        <p>The Pi now detects multiple AprilTags using OpenCV’s AprilTag dictionary. This provides a concrete path toward calibration and pose-aware navigation, and it is already fast enough for current walking-speed testing.</p>
+        <div class="figure medium">
+          <img src="../assets/images/progress/raspi-apriltag-detection.png" alt="AprilTag detection on Raspberry Pi 5">
+          <figcaption>Figure 11: Raspberry Pi 5 test setup for multi-tag detection and camera validation.</figcaption>
+        </div>
       </div>
     </section>
 
     <section class="section">
-      <p><em>This page will be updated with progress photos, test results, and implementation details throughout the semester.</em></p>
+      <h2>Integration Snapshot</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Subsystem</th><th>Current Implementation</th><th>Status</th><th>Next Step</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Leg mechanics</td><td>Prototype leg, revised servo brackets, assembled single-leg bench rig</td><td><span class="badge in-progress">In Progress</span></td><td>Scale to multi-leg assembly</td></tr>
+            <tr><td>Embedded control</td><td>ESP32 bench setup with PWM path and controller integration</td><td><span class="badge in-progress">In Progress</span></td><td>Stabilize full wiring harness and Pi-to-ESP32 link</td></tr>
+            <tr><td>IK / gait software</td><td>Single-leg and full-body gait generation implemented</td><td><span class="badge complete">Complete</span></td><td>Tune against physical robot behavior</td></tr>
+            <tr><td>Simulation</td><td>MuJoCo six-leg walking model with contact and joint limits</td><td><span class="badge complete">Complete</span></td><td>Use for parameter tuning and regression checks</td></tr>
+            <tr><td>Vision</td><td>Pi camera streaming and AprilTag detection running</td><td><span class="badge complete">Complete</span></td><td>Add pose estimation and calibration logic</td></tr>
+            <tr><td>Full robot hardware</td><td>Not yet fully assembled and verified under gait</td><td><span class="badge pending">Pending</span></td><td>Complete wiring cleanup and six-leg integration</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
-
   </main>
 
   <footer class="footer">

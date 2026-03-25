@@ -29,249 +29,200 @@
 
   <header class="page-header">
     <h1>System Design</h1>
-    <p>Requirements, architecture, and engineering trade studies</p>
+    <p>Requirements, subsystem partitioning, and design decisions behind the current robot architecture</p>
   </header>
 
   <main class="content">
-
-    <!-- System Requirements -->
-    <section class="section" id="system-requirements">
+    <section class="section">
       <h2>System Requirements</h2>
-      <p>The Hexapod was designed against a rigorous set of requirements spanning locomotion, physical constraints, packaging, power, and safety.</p>
+      <p>The website tracks the current design against the team’s project requirements for locomotion, packaging, safety, and integration.</p>
 
       <div class="req-category">
         <h4>Locomotion &amp; Maneuvering</h4>
         <table>
           <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
           <tbody>
-            <tr><td>L-1</td><td>Locomotion method</td><td>Controlled through legs</td></tr>
-            <tr><td>L-2</td><td>Travel directions</td><td>At least 2 directions (forward and backward)</td></tr>
-            <tr><td>L-3</td><td>Turning radius</td><td>Zero-degree turning radius (turn in place)</td></tr>
-            <tr><td>L-4</td><td>Navigation</td><td>Navigate to a designated point within 1 minute</td></tr>
+            <tr><td>L-1</td><td>Legged locomotion</td><td>Robot motion generated through coordinated leg motion</td></tr>
+            <tr><td>L-2</td><td>Travel directions</td><td>At least forward and backward motion</td></tr>
+            <tr><td>L-3</td><td>Turning radius</td><td>Turn in place with tripod gait or equivalent</td></tr>
+            <tr><td>L-4</td><td>Calibration / navigation support</td><td>Camera pipeline should support tagged calibration and future navigation</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="req-category">
-        <h4>Size, Weight, Payload &amp; Rider Geometry</h4>
+        <h4>Payload, Geometry &amp; Packaging</h4>
         <table>
           <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
           <tbody>
             <tr><td>S-1</td><td>Footprint</td><td>&le; 5 ft &times; 5 ft</td></tr>
-            <tr><td>S-2</td><td>Rider height</td><td>2&ndash;3 ft off the ground</td></tr>
-            <tr><td>S-3</td><td>Device weight</td><td>&lt; 150 lbs</td></tr>
-            <tr><td>S-4</td><td>Payload capacity</td><td>Carry up to 170 lbs</td></tr>
-            <tr><td>S-5</td><td>Seating</td><td>Cross-legged or standard chair seated</td></tr>
+            <tr><td>S-2</td><td>Ride height</td><td>Target 2&ndash;3 ft body height above the ground</td></tr>
+            <tr><td>S-3</td><td>Payload target</td><td>Support at least a 170 lb rider / performance payload</td></tr>
+            <tr><td>S-4</td><td>Transportability</td><td>Break down into a small number of major subassemblies</td></tr>
+            <tr><td>S-5</td><td>Shipping goal</td><td>Pack into a 3 ft &times; 3 ft transport volume</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="req-category">
-        <h4>Packaging &amp; Transport</h4>
+        <h4>Safety &amp; Controls</h4>
         <table>
           <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
           <tbody>
-            <tr><td>P-1</td><td>Shipping case</td><td>3 ft &times; 3 ft case</td></tr>
-            <tr><td>P-2</td><td>Disassembly</td><td>&le; 7 parts</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="req-category">
-        <h4>Power</h4>
-        <table>
-          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
-          <tbody>
-            <tr><td>PW-1</td><td>Battery life</td><td>&ge; 30 minutes continuous operation</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="req-category">
-        <h4>Safety</h4>
-        <table>
-          <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
-          <tbody>
-            <tr><td>SF-1</td><td>Performance safety</td><td>Safe in a dance performance environment, no rough edges</td></tr>
-            <tr><td>SF-2</td><td>Ride smoothness</td><td>Smooth enough that rider does not need to be strapped in</td></tr>
-            <tr><td>SF-3</td><td>Emergency stop</td><td>E-stop accessible to both riders, positioned dead center</td></tr>
-            <tr><td>SF-4</td><td>Auto-shutoff</td><td>IMU-based auto shut-off if robot flips</td></tr>
+            <tr><td>SF-1</td><td>Emergency stop</td><td>Accessible hardware stop for quick shutdown</td></tr>
+            <tr><td>SF-2</td><td>Orientation awareness</td><td>IMU-based state monitoring for unsafe pitch / roll conditions</td></tr>
+            <tr><td>SF-3</td><td>Operator control</td><td>Wireless manual control path to the embedded controller</td></tr>
+            <tr><td>SF-4</td><td>Gradual integration</td><td>Subsystems must be bench-testable before full assembly</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- Functional Architecture -->
-    <section class="section" id="functional-architecture">
+    <section class="section">
       <h2>Functional Architecture</h2>
-      <p>The functional architecture decomposes the hexapod into five primary subsystems, each responsible for a distinct domain of operation.</p>
+      <p>The project is partitioned into five functional blocks so the team can develop locomotion, electronics, perception, and structure in parallel.</p>
 
       <div class="figure medium">
-        <img src="../assets/images/proposal/3_functional_architecture.png" alt="Functional Architecture Diagram">
-        <figcaption>Figure 1: Functional architecture showing the five subsystems and their interactions.</figcaption>
+        <img src="../assets/images/proposal/3_functional_architecture.png" alt="Functional architecture diagram">
+        <figcaption>Figure 1: Functional architecture showing perception, control, actuation, power, and structure as separate but tightly coupled subsystems.</figcaption>
       </div>
 
-      <div class="card">
-        <h3>Subsystem Descriptions</h3>
-        <ul>
-          <li><strong>Power:</strong> Distributes electrical energy from the onboard battery to all electronic and mechanical subsystems.</li>
-          <li><strong>Compute:</strong> Performs inverse kinematics calculations, state estimation using IMU data, and generates gait patterns for walking and dancing.</li>
-          <li><strong>Control:</strong> Receives user input from the wireless controller (joystick directions, speed dial, buttons) and translates these into high-level movement commands.</li>
-          <li><strong>Locomotion:</strong> Drives 18 BLDC motors (3 per leg &times; 6 legs) via ODrive controllers, converting electrical signals into physical leg motion.</li>
-          <li><strong>Mechanical System:</strong> Provides structural support for the payload (riders) and transmits forces generated by servos through leg linkages to the ground.</li>
-        </ul>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Perception &amp; State Estimation</h3>
+          <p>Camera-based AprilTag detection and IMU feedback provide the robot with the information needed for calibration, pose monitoring, and future autonomous behavior.</p>
+        </div>
+        <div class="card">
+          <h3>Motion Planning</h3>
+          <p>The Raspberry Pi computes body-relative foot trajectories, inverse kinematics, and gait timing for stand, walk, turn, and future dance routines.</p>
+        </div>
+        <div class="card">
+          <h3>Embedded Control</h3>
+          <p>The ESP32 manages real-time command handling, PWM updates, and safety logic so the timing-sensitive layer remains decoupled from higher-level planning.</p>
+        </div>
+        <div class="card">
+          <h3>Mechanical Structure</h3>
+          <p>The rectangular body, six 3-DOF legs, and modular brackets translate servo motion into stable ground contact while staying manufacturable within course constraints.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Cyberphysical Architecture -->
-    <section class="section" id="cyberphysical-architecture">
+    <section class="section">
       <h2>Cyberphysical Architecture</h2>
-      <p>The cyberphysical architecture maps functional subsystems onto specific hardware and software components.</p>
+      <p>The current implementation has converged on a servo-driven architecture rather than the earlier BLDC concept, because it supports faster subsystem integration and lower-risk debugging.</p>
 
       <div class="figure medium">
-        <img src="../assets/images/proposal/5_cyberphysical_architecture.png" alt="Cyberphysical Architecture Diagram">
-        <figcaption>Figure 2: Cyberphysical architecture showing hardware components and communication interfaces.</figcaption>
+        <img src="../assets/images/proposal/5_cyberphysical_architecture.png" alt="Cyberphysical architecture diagram">
+        <figcaption>Figure 2: Cyberphysical architecture mapping software layers onto the Raspberry Pi, ESP32, power system, sensors, and servos.</figcaption>
       </div>
 
-      <div class="card">
-        <h3>Hardware Components</h3>
+      <div class="table-wrapper">
         <table>
-          <thead><tr><th>Domain</th><th>Components</th><th>Role</th></tr></thead>
+          <thead><tr><th>Domain</th><th>Current Components</th><th>Role</th></tr></thead>
           <tbody>
-            <tr><td><strong>Sensing</strong></td><td>IMU, Camera, E-stop Button</td><td>Orientation, visual data, emergency override</td></tr>
-            <tr><td><strong>Computation</strong></td><td>Raspberry Pi + ESP32</td><td>RPi: IK, state estimation, gait generation; ESP32: real-time servo control &amp; Bluetooth</td></tr>
-            <tr><td><strong>Actuation</strong></td><td>18 Servo Motors</td><td>Drive coxa, femur, and tibia joints on all six legs</td></tr>
-            <tr><td><strong>Power</strong></td><td>Battery + Power Distribution Board</td><td>Supply and regulate power to all subsystems</td></tr>
-            <tr><td><strong>Remote Controller</strong></td><td>ESP32, Joysticks, Potentiometer, Button</td><td>Transmit operator commands via Bluetooth</td></tr>
+            <tr><td><strong>Perception</strong></td><td>Raspberry Pi 5 camera module, IMU, emergency stop</td><td>AprilTag detection, state awareness, and safety monitoring inputs</td></tr>
+            <tr><td><strong>High-Level Compute</strong></td><td>Raspberry Pi 5</td><td>Inverse kinematics, gait generation, simulation alignment, calibration, and future navigation logic</td></tr>
+            <tr><td><strong>Embedded Control</strong></td><td>ESP32 + PCA9685 PWM driver boards</td><td>Receives commands, maintains timing-sensitive servo output, and interfaces with the operator control path</td></tr>
+            <tr><td><strong>Actuation</strong></td><td>18 high-torque servos across six legs</td><td>Drives coxa, femur, and tibia joints for stance, swing, and turning maneuvers</td></tr>
+            <tr><td><strong>Operator Interface</strong></td><td>Wireless handheld controller / XR-style prototype input</td><td>Manual drive commands during testing and demos</td></tr>
+            <tr><td><strong>Power</strong></td><td>Battery packs, regulators, power distribution, wiring harnesses</td><td>Separates high-current servo loads from logic power where possible</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- System Design Description -->
-    <section class="section" id="system-description">
-      <h2>System Design Description</h2>
+    <section class="section">
+      <h2>Current Design Rationale</h2>
 
       <div class="figure medium">
-        <img src="../assets/images/proposal/6a_system_architecture.png" alt="System Architecture Diagram">
-        <figcaption>Figure 3: High-level system architecture showing integration of all subsystems.</figcaption>
-      </div>
-
-      <div class="figure medium">
-        <img src="../assets/images/cad/CAD.png" alt="CAD rendering of the hexapod robot">
-        <figcaption>Figure 4: CAD rendering of the hexapod design.</figcaption>
+        <img src="../assets/images/cad/CAD.png" alt="CAD rendering of the hexapod design">
+        <figcaption>Figure 3: CAD model of the rectangular body layout and six-leg mounting geometry.</figcaption>
       </div>
 
       <div class="card">
-        <h3>Motor Control Subsystem</h3>
-        <p>18 brushless DC motors controlled via ODrive controllers, three per leg. The design uses a split motor strategy &mdash; 6 high-torque coxa motors and 12 lighter femur/tibia motors. Each leg has:</p>
-        <ul>
-          <li><strong>Coxa joint (hip yaw):</strong> Lateral rotation for turning and strafing</li>
-          <li><strong>Femur joint (hip pitch):</strong> Vertical lift for stepping</li>
-          <li><strong>Tibia joint (knee pitch):</strong> Lower leg extension for ground contact</li>
-        </ul>
-        <p>Leg segments fabricated from aluminum and 3D-printed high-strength polymer.</p>
+        <h3>Actuation &amp; Leg Geometry</h3>
+        <p>The robot uses six identical legs with three joints per leg: coxa for horizontal sweep, femur for upper-leg lift, and tibia for ground reach. A servo-based actuation stack gives the team a simpler control and integration path than a distributed BLDC controller network, which is important for the semester schedule and incremental bench testing.</p>
+        <p>Current geometry work is shared across CAD, the IK solver, and MuJoCo so that updates to leg lengths or mounting positions propagate consistently through the project.</p>
       </div>
 
       <div class="card">
-        <h3>Sensor Subsystem</h3>
-        <ul>
-          <li><strong>IMU (MPU6050):</strong> 6-axis accelerometer/gyroscope for orientation and flip detection</li>
-          <li><strong>Camera:</strong> Forward-facing on Raspberry Pi for potential CV integration</li>
-          <li><strong>Joysticks:</strong> Two analog joysticks for X/Y directional input</li>
-          <li><strong>Potentiometer:</strong> Continuous speed control dial</li>
-        </ul>
+        <h3>Compute Partition</h3>
+        <p>The Raspberry Pi and ESP32 are intentionally split by responsibility. The Pi owns algorithmic tasks such as gait generation, AprilTag processing, and calibration logic. The ESP32 owns fast, deterministic tasks such as command reception, PWM output, and hardware-side safety response.</p>
       </div>
 
       <div class="card">
-        <h3>Software Integration Subsystem</h3>
-        <ul>
-          <li><strong>IK Engine:</strong> Geometric solver converting foot positions to joint angles</li>
-          <li><strong>State Estimation:</strong> IMU fusion for orientation and unsafe-condition detection</li>
-          <li><strong>Gait Generation:</strong> Tripod gait (fast), wave gait (stable), custom dance gaits</li>
-          <li><strong>Bluetooth Communication:</strong> Bidirectional link between controller and onboard system</li>
-        </ul>
-        <p>Layered architecture: Communication Layer (Bluetooth I/O) &rarr; Control Layer (commands + sensor data) &rarr; Execution Layer (IK + servo driving).</p>
+        <h3>Incremental Validation Strategy</h3>
+        <p>The team’s workflow moves from simulation to single-leg bench tests to multi-leg hardware integration. This lowers risk by validating kinematics, servo directions, power wiring, and communication interfaces before the full robot is assembled.</p>
       </div>
     </section>
 
-    <!-- Design Trade Studies -->
-    <section class="section" id="trade-studies">
+    <section class="section">
       <h2>Design Trade Studies</h2>
 
       <div class="card">
         <h3>Leg Configuration: 2 DOF vs. 3 DOF</h3>
         <div class="figure small">
-          <img src="../assets/images/proposal/4a_2vs3DOF.png" alt="2 DOF vs 3 DOF comparison">
-          <figcaption>Figure 5: 2 DOF (top) vs. 3 DOF (bottom) leg configurations.</figcaption>
+          <img src="../assets/images/proposal/4a_2vs3DOF.png" alt="2 DOF versus 3 DOF comparison">
+          <figcaption>Figure 4: Early trade study comparing two-joint and three-joint leg architectures.</figcaption>
         </div>
         <table>
           <thead><tr><th>Criterion</th><th>2 DOF</th><th>3 DOF</th></tr></thead>
           <tbody>
-            <tr><td>Zero-degree turning</td><td>Not achievable</td><td>Fully supported</td></tr>
-            <tr><td>Lateral movement</td><td>Limited</td><td>Omnidirectional</td></tr>
-            <tr><td>Complexity</td><td>Simpler (12 motors)</td><td>More complex (18 motors)</td></tr>
-            <tr><td>Dance expressiveness</td><td>Restricted</td><td>Highly expressive</td></tr>
+            <tr><td>Turning in place</td><td>Limited</td><td>Supported</td></tr>
+            <tr><td>Lateral foot placement</td><td>Minimal</td><td>Available</td></tr>
+            <tr><td>Dance expressiveness</td><td>Restricted</td><td>Higher</td></tr>
+            <tr><td>Complexity</td><td>Lower</td><td>Higher but acceptable</td></tr>
           </tbody>
         </table>
-        <p><strong>Decision: 3 DOF.</strong> Zero-degree turning radius is a hard requirement, and lateral movement is essential for dance. The added complexity is justified.</p>
+        <p><strong>Decision:</strong> 3 DOF per leg. The added complexity is necessary to support stable gait design and expressive motion.</p>
       </div>
 
       <div class="card">
         <h3>Body Shape: Hexagonal vs. Rectangular</h3>
         <div class="figure small">
-          <img src="../assets/images/proposal/4b_rectangleVShexagon.png" alt="Hexagonal vs Rectangular body">
-          <figcaption>Figure 6: Rectangular (top) vs. hexagonal (bottom) body shapes.</figcaption>
+          <img src="../assets/images/proposal/4b_rectangleVShexagon.png" alt="Hexagonal versus rectangular body comparison">
+          <figcaption>Figure 5: Body-shape trade study for rider space, manufacturability, and packing.</figcaption>
         </div>
         <table>
           <thead><tr><th>Criterion</th><th>Hexagonal</th><th>Rectangular</th></tr></thead>
           <tbody>
-            <tr><td>Dual-rider seating</td><td>Awkward layout</td><td>Natural arrangement</td></tr>
-            <tr><td>Manufacturing</td><td>Angled cuts, harder</td><td>Right-angle, easier</td></tr>
-            <tr><td>Internal volume</td><td>Less usable space</td><td>More usable space</td></tr>
-            <tr><td>Transportability</td><td>Wider profile</td><td>Fits 3x3ft constraint</td></tr>
+            <tr><td>Usable internal volume</td><td>Less efficient</td><td>More efficient</td></tr>
+            <tr><td>Manufacturing simplicity</td><td>More angled joints</td><td>Simpler</td></tr>
+            <tr><td>Leg placement symmetry</td><td>Good</td><td>Good</td></tr>
+            <tr><td>Transport fit</td><td>Harder to pack</td><td>Better aligned with shipping constraint</td></tr>
           </tbody>
         </table>
-        <p><strong>Decision: Rectangular.</strong> Better for dual-rider seating, easier manufacturing, and fits the shipping constraint.</p>
+        <p><strong>Decision:</strong> Rectangular body. It better supports packaging, structure, and accessible mounting space.</p>
       </div>
 
       <div class="card">
-        <h3>Microcontroller: Arduino vs. ESP32 vs. STM32</h3>
-        <div class="figure small">
-          <img src="../assets/images/proposal/4c_microcontroller_options.png" alt="Microcontroller options">
-          <figcaption>Figure 7: Arduino (top), ESP32 (middle), STM32 (bottom).</figcaption>
-        </div>
+        <h3>Actuation Architecture: BLDC + ODrive vs. High-Torque Servos</h3>
         <table>
-          <thead><tr><th>Criterion</th><th>Arduino</th><th>ESP32</th><th>STM32</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>BLDC + ODrive</th><th>High-Torque Servos</th></tr></thead>
           <tbody>
-            <tr><td>Processing power</td><td>Low (8-bit AVR)</td><td>Moderate (dual-core 240MHz)</td><td>High (ARM Cortex-M)</td></tr>
-            <tr><td>Wireless (Bluetooth)</td><td>External module</td><td>Built-in BLE &amp; Wi-Fi</td><td>External module</td></tr>
-            <tr><td>PWM channels</td><td>Limited</td><td>16 channels</td><td>Many channels</td></tr>
-            <tr><td>Cost</td><td>Low</td><td>Low</td><td>Moderate</td></tr>
+            <tr><td>Bring-up complexity</td><td>High</td><td>Moderate</td></tr>
+            <tr><td>Semester integration risk</td><td>Higher</td><td>Lower</td></tr>
+            <tr><td>Command path</td><td>Distributed motor control stack</td><td>Direct PWM-based joint control</td></tr>
+            <tr><td>Bench-test path</td><td>Harder to stage</td><td>Easier with single-leg tests</td></tr>
           </tbody>
         </table>
-        <p><strong>Decision: ESP32 + Raspberry Pi.</strong> ESP32 provides built-in Bluetooth and servo control; RPi handles IK, state estimation, and gait generation.</p>
+        <p><strong>Decision:</strong> High-torque servos. The team prioritized a controllable integration path and rapid subsystem validation over a more ambitious but riskier BLDC architecture.</p>
       </div>
 
       <div class="card">
-        <h3>Controller: Custom vs. Premade (Xbox/PS)</h3>
-        <div class="figure small">
-          <img src="../assets/images/proposal/4d_controller_options.png" alt="Controller options">
-          <figcaption>Figure 8: Premade Xbox (top) vs. custom controller (bottom).</figcaption>
-        </div>
+        <h3>Compute Partition: Single Controller vs. Raspberry Pi + ESP32</h3>
         <table>
-          <thead><tr><th>Criterion</th><th>Custom</th><th>Premade (Xbox/PS)</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Single MCU</th><th>Pi + ESP32 Split</th></tr></thead>
           <tbody>
-            <tr><td>Input customization</td><td>Fully tailored (joysticks, pot, buttons)</td><td>Generic layout</td></tr>
-            <tr><td>Bluetooth integration</td><td>Direct ESP32-to-ESP32, low latency</td><td>Standard HID, may have latency</td></tr>
-            <tr><td>Development effort</td><td>Higher (PCB, firmware)</td><td>Lower (off-the-shelf)</td></tr>
-            <tr><td>Reliability</td><td>Dedicated, no unwanted features</td><td>May have connectivity quirks</td></tr>
+            <tr><td>Computer vision headroom</td><td>Limited</td><td>Strong on Pi 5</td></tr>
+            <tr><td>Real-time PWM timing</td><td>Shared with other tasks</td><td>Dedicated on ESP32</td></tr>
+            <tr><td>Software modularity</td><td>Lower</td><td>Higher</td></tr>
+            <tr><td>Debugging</td><td>Tighter coupling</td><td>Clearer interfaces</td></tr>
           </tbody>
         </table>
-        <p><strong>Decision: Custom controller.</strong> Hexapod-specific controls (gait selection, speed dial) and reliable ESP32-to-ESP32 link.</p>
+        <p><strong>Decision:</strong> Split architecture. The Pi handles planning and perception; the ESP32 handles deterministic hardware-side control.</p>
       </div>
     </section>
-
   </main>
 
   <footer class="footer">
