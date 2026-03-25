@@ -841,6 +841,7 @@ details.ilr-group td .badge {
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge.pending {
