@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="deploy-manual">Deploy Manual Mode</button>
+  <button class="button ghost" id="runtime-stop">Stop Runtime</button>
+  <a class="button secondary" href="{{ url_for('dance') }}">Create Dance</a>
+  <a class="button secondary" href="{{ url_for('camera') }}">Open Camera Page</a>
+{% endblock %}
+
+{% block content %}
+  <div id="calibration-warning" style="display: none; margin-bottom: 18px; padding: 18px; border-radius: 22px; border: 2px solid var(--warn); background: linear-gradient(180deg, #fff8f0, #fef3e6);">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <div>
+        <span class="panel-label" style="color: var(--warn);">Calibration Required</span>
+        <h2 style="margin: 0; font-size: 1.2rem;">No Calibration Found</h2>
+        <p class="panel-copy" style="margin: 4px 0 0;">Please calibrate all 6 legs before using manual control.</p>
+      </div>
+      <div class="button-row">
+        <a class="button secondary" href="{{ url_for('calibration') }}">Go to Calibration</a>
+        <button class="button ghost" id="dismiss-calibration-warning">Continue Anyway</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Driver Pad</span>
+          <h2>Keyboard-Like Controls</h2>
+          <p class="panel-copy">The layout mirrors the keyboard keys you will actually press. Hold a button or use the keyboard directly.</p>
+        </div>
+        <div class="status-chip idle" id="manual-runtime-chip">Runtime idle</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Controller State</strong>
+          <span id="controller-state">Idle</span>
+        </div>
+        <div class="info-card">
+          <strong>Keyboard</strong>
+          <span id="keyboard-readout">No key pressed.</span>
+        </div>
+        <div class="info-card">
+          <strong>Override</strong>
+          <span id="override-state">No active override.</span>
+        </div>
+      </div>
+
+      <div class="panel-head" style="margin-top: 1rem;">
+        <div>
+          <span class="panel-label">Xbox Controller</span>
+          <h2>Gamepad Status</h2>
+        </div>
+        <div class="status-chip idle" id="xbox-chip">Disconnected</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Device</strong>
+          <span id="xbox-device-name">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Connection</strong>
+          <span id="xbox-connection-type">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Battery</strong>
+          <span id="xbox-battery">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Axes</strong>
+          <span id="xbox-axes">fwd: 0 &nbsp; str: 0 &nbsp; turn: 0</span>
+        </div>
+      </div>
+
+      <div class="range-wrap">
+        <label for="override-magnitude">Control Magnitude <span id="override-magnitude-value">700</span></label>
+        <input id="override-magnitude" type="range" min="0" max="1000" step="50" value="700">
+      </div>
+
+      <div class="driver-board">
+        <button class="drive-key turn" id="manual-q" data-hold-mode="LL">
+          <span class="drive-keycap">Q</span>
+          <span class="drive-label">Turn Left</span>
+        </button>
+        <button class="drive-key forward" id="manual-w" data-hold-mode="F">
+          <span class="drive-keycap">W</span>
+          <span class="drive-label">Forward</span>
+        </button>
+        <button class="drive-key turn" id="manual-e" data-hold-mode="RR">
+          <span class="drive-keycap">E</span>
+          <span class="drive-label">Turn Right</span>
+        </button>
+
+        <button class="drive-key lateral" id="manual-a" data-hold-mode="L">
+          <span class="drive-keycap">A</span>
+          <span class="drive-label">Left</span>
+        </button>
+        <button class="drive-key reverse" id="manual-s" data-hold-mode="B">
+          <span class="drive-keycap">S</span>
+          <span class="drive-label">Backward</span>
+        </button>
+        <button class="drive-key lateral" id="manual-d" data-hold-mode="R">
+          <span class="drive-keycap">D</span>
+          <span class="drive-label">Right</span>
+        </button>
+
+        <button class="drive-stop" id="manual-space" data-hold-mode="N">
+          <span class="drive-keycap">Space</span>
+          <span class="drive-label">Stand / Neutral</span>
+        </button>
+        <button class="button ghost wide-button" id="override-release">Release Override</button>
+      </div>
+
+      <details class="details-card">
+        <summary>Advanced Runtime Settings</summary>
+        <div class="details-body field-grid">
+          <div class="field">
+            <label for="runtime-port">Serial Port</label>
+            <input id="runtime-port" type="text">
+          </div>
+          <div class="field">
+            <label for="runtime-baudrate">Baudrate</label>
+            <input id="runtime-baudrate" type="number" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-deadzone">Deadzone</label>
+            <input id="runtime-deadzone" type="number" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-stride">Stride (mm)</label>
+            <input id="runtime-stride" type="number" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-lift-scale">Lift Scale</label>
+            <input id="runtime-lift-scale" type="number" min="0.1" step="0.05">
+          </div>
+          <div class="field">
+            <label for="runtime-frequency">Frequency (Hz)</label>
+            <input id="runtime-frequency" type="number" min="0.05" step="0.05">
+          </div>
+          <div class="field">
+            <label for="runtime-yaw-stride-deg">Yaw Stride (deg)</label>
+            <input id="runtime-yaw-stride-deg" type="number" min="0.5" step="0.5">
+          </div>
+          <div class="field">
+            <label for="runtime-stance-z">Stance Z (mm)</label>
+            <input id="runtime-stance-z" type="number" max="-1" step="5">
+          </div>
+          <div class="field full">
+            <label>Verbose Logging</label>
+            <div class="checkbox-row">
+              <input id="runtime-verbose" type="checkbox">
+              <span>Keep runtime logging visible in the browser.</span>
+            </div>
+          </div>
+        </div>
+      </details>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Runtime Status</span>
+            <h2>Manual Mode Readout</h2>
+          </div>
+        </div>
+        <div class="info-card">
+          <strong>Runtime Command</strong>
+          <code id="runtime-command-preview">Loading...</code>
+        </div>
+        <div class="info-card">
+          <strong>Override File</strong>
+          <code id="override-file-readout">Loading...</code>
+        </div>
+        <div class="info-card">
+          <strong>Runtime Detail</strong>
+          <span id="manual-runtime-detail">Waiting for runtime status.</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Logs</span>
+            <h2>Runtime Log</h2>
+          </div>
+        </div>
+        <pre id="runtime-log">Waiting for runtime logs...</pre>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="deploy-automated">Deploy Automated Mode</button>
+  <button class="button ghost" id="camera-stop">Stop Camera</button>
+  <button class="button ghost" id="stop-all">Stop All Services</button>
+{% endblock %}
+
+{% block content %}
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Calibration</span>
+          <h2>AprilTag Guided Setup</h2>
+          <p class="panel-copy">Use this page to boot the detect pipeline, verify tag visibility, and stage the robot for future preset dances.</p>
+        </div>
+        <div class="status-chip idle" id="automated-camera-chip">Camera idle</div>
+      </div>
+
+      <div class="steps-row">
+        <div class="step-card">
+          <span class="step-number">1</span>
+          <div>
+            <strong>Deploy automated mode</strong>
+            <p>Starts runtime and the AprilTag detect camera together.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-number">2</span>
+          <div>
+            <strong>Check calibration</strong>
+            <p>Watch tag count, IDs, and stream feedback without leaving the page.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-number">3</span>
+          <div>
+            <strong>Pick a dance preset</strong>
+            <p>The UI is live; the actual dance engine can be wired in later.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid automated-grid">
+        <div class="info-card">
+          <strong>Calibration State</strong>
+          <span id="calibration-state">Waiting for camera</span>
+          <p id="calibration-detail">Start automated mode to read AprilTags.</p>
+        </div>
+        <div class="info-card">
+          <strong>Tags</strong>
+          <span id="tag-count-chip">Tags: --</span>
+          <p id="tag-ids-chip">IDs: --</p>
+        </div>
+        <div class="info-card">
+          <strong>Camera Mode</strong>
+          <span id="camera-mode-chip">Camera mode: --</span>
+          <p id="camera-summary-copy">AprilTag detect mode is used for automated workflows.</p>
+        </div>
+        <div class="info-card">
+          <strong>Dance Engine</strong>
+          <span id="dance-state">Placeholder</span>
+          <p id="dance-detail">Preset buttons are ready; choreography runtime is not attached yet.</p>
+        </div>
+      </div>
+
+      <div class="camera-stage">
+        <img id="camera-stream" class="hidden" alt="Robot camera stream">
+        <iframe id="camera-frame" class="camera-frame hidden" title="Robot camera live view" loading="lazy"></iframe>
+        <div class="camera-empty" id="camera-empty">Camera service is stopped. Click Deploy Automated Mode to launch AprilTag detection and preview it here.</div>
+      </div>
+      <div class="link-list horizontal">
+        <a id="camera-page-link" href="#" target="_blank" rel="noreferrer">Vision service page</a>
+        <a id="camera-stream-link" href="#" target="_blank" rel="noreferrer">MJPEG stream</a>
+      </div>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Dance Presets</span>
+            <h2>Preset Launcher</h2>
+          </div>
+        </div>
+        <div class="preset-grid">
+          {% for preset in dance_presets %}
+            <button class="preset-card" data-dance-preset="{{ preset.id }}">
+              <strong>{{ preset.label }}</strong>
+              <span>{{ preset.detail }}</span>
+            </button>
+          {% endfor %}
+        </div>
+        <div class="info-card">
+          <strong>Last Request</strong>
+          <span id="dance-last-request">No preset requested yet.</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Camera Command</span>
+            <h2>Detect Service</h2>
+          </div>
+        </div>
+        <div class="info-card">
+          <strong>Command Preview</strong>
+          <code id="camera-command-preview">Loading...</code>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="camera-host">Host</label>
+            <input id="camera-host" type="text">
+          </div>
+          <div class="field">
+            <label for="camera-port">Port</label>
+            <input id="camera-port" type="number" min="1" step="1">
+          </div>
+          <div class="field full">
+            <label for="camera-detector">Detector</label>
+            <input id="camera-detector" type="text">
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Logs</span>
+            <h2>Camera Log</h2>
+          </div>
+        </div>
+        <pre id="camera-log">Waiting for camera logs...</pre>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

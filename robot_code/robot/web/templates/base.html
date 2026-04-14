@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} | Robot Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='robot_ui.css', v=asset_version) }}">
+</head>
+<body data-page="{{ page_key }}">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-kicker">Team 6</div>
+      <div class="sidebar-title">Robot Dashboard</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard') }}" class="nav-link{% if page_key == 'dashboard' %} active{% endif %}">Dashboard</a>
+      <a href="{{ url_for('manual') }}" class="nav-link{% if page_key == 'manual' %} active{% endif %}">Manual</a>
+      <a href="{{ url_for('calibration') }}" class="nav-link{% if page_key == 'calibration' %} active{% endif %}">Calibration</a>
+      <a href="{{ url_for('auto') }}" class="nav-link{% if page_key == 'auto' %} active{% endif %}">Auto</a>
+      <a href="{{ url_for('dance') }}" class="nav-link{% if page_key == 'dance' %} active{% endif %}">Dance</a>
+      <a href="{{ url_for('camera') }}" class="nav-link{% if page_key == 'camera' %} active{% endif %}">Camera</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="status-chip idle" id="sidebar-runtime-chip">Runtime idle</div>
+      <div class="status-chip idle" id="sidebar-camera-chip">Camera idle</div>
+    </div>
+  </aside>
+
+  <main class="main-shell">
+    <header class="page-header">
+      <div>
+        <p class="page-kicker">Browser Control</p>
+        <h1>{{ title }}</h1>
+        {% if subtitle %}
+          <p class="page-subtitle">{{ subtitle }}</p>
+        {% endif %}
+      </div>
+      <div class="header-actions">
+        {% block header_actions %}{% endblock %}
+      </div>
+    </header>
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <div class="toast-stack" id="toast-stack"></div>
+
+  <script>
+    window.ROBOT_UI_CONFIG = {
+      page: {{ page_key | tojson }},
+      defaults: {{ ui_defaults | tojson }},
+      initialStatus: {{ initial_status | tojson }},
+    };
+  </script>
+  <script src="{{ url_for('static', filename='robot_ui.js', v=asset_version) }}"></script>
+</body>
+</html>

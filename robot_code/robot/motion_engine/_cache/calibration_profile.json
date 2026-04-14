@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "name": "manual-calibration",
+  "reference_stance_z_mm": -495.0,
+  "legs": [
+    {
+      "leg_index": 0,
+      "label": "L1",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    },
+    {
+      "leg_index": 1,
+      "label": "L2",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    },
+    {
+      "leg_index": 2,
+      "label": "L3",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    },
+    {
+      "leg_index": 3,
+      "label": "R1",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    },
+    {
+      "leg_index": 4,
+      "label": "R2",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    },
+    {
+      "leg_index": 5,
+      "label": "R3",
+      "angles_deg": {
+        "coxa_deg": 90.0,
+        "femur_deg": 64.23419122714509,
+        "tibia_deg": 116.33185549681369
+      },
+      "offsets_deg": {
+        "coxa_deg": 0.0,
+        "femur_deg": 0.0,
+        "tibia_deg": 0.0
+      },
+      "saved": false,
+      "updated_at": null
+    }
+  ],
+  "updated_at": null
+}

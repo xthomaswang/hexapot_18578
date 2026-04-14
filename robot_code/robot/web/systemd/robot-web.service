@@ -1,0 +1,16 @@
+[Unit]
+Description=Robot Dashboard Web Host
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=team6
+WorkingDirectory=/home/team6/Desktop/robot/web
+ExecStart=/usr/bin/python3 /home/team6/Desktop/robot/web/app.py --host 0.0.0.0 --port 8091
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

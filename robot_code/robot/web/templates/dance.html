@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="deploy-manual">Deploy Manual Mode</button>
+  <a class="button ghost" href="{{ url_for('manual') }}">Open Manual Controller</a>
+{% endblock %}
+
+{% block content %}
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Dance Capture</span>
+          <h2>Manual Timeline Recorder</h2>
+          <p class="panel-copy">Start a recording, drive the robot with the manual controller, then stop to save a timestamped dance package into manual storage.</p>
+        </div>
+        <div class="status-chip idle" id="dance-recording-chip">Recording idle</div>
+      </div>
+
+      <div class="steps-row">
+        <div class="step-card">
+          <span class="step-number">1</span>
+          <div>
+            <strong>Deploy manual mode</strong>
+            <p>Bring up the runtime so the robot is ready before you begin the capture.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-number">2</span>
+          <div>
+            <strong>Name the dance</strong>
+            <p>The saved folder will use <code>time_customized-name</code> inside <code>/robot/dance_engine/storage/manual</code>.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <span class="step-number">3</span>
+          <div>
+            <strong>Record and drive</strong>
+            <p>Once recording is live, every manual override change and its timing are captured until you stop.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field full">
+          <label for="recording-name">Custom Dance Name</label>
+          <input id="recording-name" type="text" placeholder="moonwalk_alpha">
+        </div>
+      </div>
+
+      <div class="info-grid automated-grid">
+        <div class="info-card">
+          <strong>Save Target</strong>
+          <span id="recording-save-path">Loading...</span>
+          <p id="recording-save-detail">Manual recordings save into the dance engine library.</p>
+        </div>
+        <div class="info-card">
+          <strong>Current Session</strong>
+          <span id="recording-current-name">No active recording.</span>
+          <p id="recording-duration">Duration: 0.0s</p>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="button secondary" id="recording-start-manual">Start Manual Recording</button>
+        <button class="button danger" id="recording-stop">Stop And Save</button>
+        <a class="button ghost" href="{{ url_for('manual') }}">Drive On Manual Page</a>
+      </div>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Recording Status</span>
+            <h2>Capture Readout</h2>
+          </div>
+        </div>
+        <div class="info-grid automated-grid">
+          <div class="info-card">
+            <strong>Status</strong>
+            <span id="recording-status">Idle</span>
+            <p id="recording-detail">No recording in progress.</p>
+          </div>
+          <div class="info-card">
+            <strong>Events</strong>
+            <span id="recording-event-count">0</span>
+            <p>Unique motion changes captured so far.</p>
+          </div>
+          <div class="info-card">
+            <strong>Last Saved</strong>
+            <span id="recording-last-name">Nothing saved yet.</span>
+            <p id="recording-last-path">The newest recording path will appear here.</p>
+          </div>
+          <div class="info-card">
+            <strong>Future Auto Storage</strong>
+            <span id="recording-auto-root">Loading...</span>
+            <p>Reserved for future AprilTag or autonomous dance captures.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Recent Saves</span>
+            <h2>Recording Library</h2>
+          </div>
+        </div>
+        <div class="recording-list" id="recording-recent-list">No manual recordings saved yet.</div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

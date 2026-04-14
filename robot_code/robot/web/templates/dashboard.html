@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="deploy-manual">Deploy Manual Mode</button>
+  <button class="button secondary" id="deploy-automated">Deploy Automated Mode</button>
+  <button class="button ghost" id="stop-all">Stop All Services</button>
+{% endblock %}
+
+{% block content %}
+  <section class="grid cards-4">
+    <article class="panel stat-panel">
+      <span class="panel-label">Robot</span>
+      <div class="stat-value" id="overview-robot-state">Loading...</div>
+      <p class="panel-copy" id="overview-robot-detail">Waiting for status.</p>
+    </article>
+    <article class="panel stat-panel">
+      <span class="panel-label">Runtime</span>
+      <div class="stat-value" id="overview-runtime-state">Loading...</div>
+      <p class="panel-copy" id="overview-runtime-detail">Waiting for status.</p>
+    </article>
+    <article class="panel stat-panel">
+      <span class="panel-label">Camera</span>
+      <div class="stat-value" id="overview-camera-state">Loading...</div>
+      <p class="panel-copy" id="overview-camera-detail">Waiting for status.</p>
+    </article>
+    <article class="panel stat-panel">
+      <span class="panel-label">Calibration</span>
+      <div class="stat-value" id="overview-calibration-state">Loading...</div>
+      <p class="panel-copy" id="overview-calibration-detail">Waiting for status.</p>
+    </article>
+  </section>
+
+  <section class="grid cards-4">
+    <article class="panel route-panel">
+      <div class="route-eyebrow">Drive</div>
+      <h2>Manual</h2>
+      <a class="button secondary" href="{{ url_for('manual') }}">Open</a>
+    </article>
+    <article class="panel route-panel">
+      <div class="route-eyebrow">Servo Setup</div>
+      <h2>Calibration</h2>
+      <a class="button secondary" href="{{ url_for('calibration') }}">Open</a>
+    </article>
+    <article class="panel route-panel">
+      <div class="route-eyebrow">Calibrate</div>
+      <h2>Auto</h2>
+      <a class="button secondary" href="{{ url_for('auto') }}">Open</a>
+    </article>
+    <article class="panel route-panel">
+      <div class="route-eyebrow">Record</div>
+      <h2>Dance</h2>
+      <a class="button secondary" href="{{ url_for('dance') }}">Open</a>
+    </article>
+    <article class="panel route-panel">
+      <div class="route-eyebrow">Vision</div>
+      <h2>Camera</h2>
+      <a class="button secondary" href="{{ url_for('camera') }}">Open</a>
+    </article>
+  </section>
+{% endblock %}

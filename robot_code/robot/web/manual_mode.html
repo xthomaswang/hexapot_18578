@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button primary" id="deploy-manual">Deploy Manual Mode</button>
+  <button class="button ghost" id="runtime-stop">Stop Runtime</button>
+  <a class="button secondary" href="{{ url_for('dance') }}">Create Dance</a>
+  <a class="button camera" href="{{ url_for('camera') }}">Open Camera Page</a>
+{% endblock %}
+
+{% block content %}
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Driver Pad</span>
+          <h2>Keyboard-Like Controls</h2>
+          <p class="panel-copy">The layout mirrors the keyboard keys you will actually press. Hold a button or use the keyboard directly.</p>
+        </div>
+        <div class="status-chip idle" id="manual-runtime-chip">Runtime idle</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Controller State</strong>
+          <span id="controller-state">Idle</span>
+        </div>
+        <div class="info-card">
+          <strong>Keyboard</strong>
+          <span id="keyboard-readout">No key pressed.</span>
+        </div>
+        <div class="info-card">
+          <strong>Override</strong>
+          <span id="override-state">No active override.</span>
+        </div>
+      </div>
+
+      <div class="panel-head" style="margin-top: 1rem;">
+        <div>
+          <span class="panel-label">Xbox Controller</span>
+          <h2>Gamepad Status</h2>
+        </div>
+        <div class="status-chip idle" id="xbox-chip">Disconnected</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Device</strong>
+          <span id="xbox-device-name">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Connection</strong>
+          <span id="xbox-connection-type">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Battery</strong>
+          <span id="xbox-battery">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Axes</strong>
+          <span id="xbox-axes">fwd: 0 &nbsp; str: 0 &nbsp; turn: 0</span>
+        </div>
+      </div>
+
+      <div class="range-wrap">
+        <label for="override-magnitude">Control Magnitude <span id="override-magnitude-value">700</span></label>
+        <input id="override-magnitude" type="range" min="0" max="1000" step="50" value="700">
+      </div>
+
+      <div class="driver-board">
+        <button class="drive-key turn" id="manual-q" data-hold-mode="LL">
+          <span class="drive-keycap">Q</span>
+          <span class="drive-label">Turn Left</span>
+        </button>
+        <button class="drive-key forward" id="manual-w" data-hold-mode="F">
+          <span class="drive-keycap">W</span>
+          <span class="drive-label">Forward</span>
+        </button>
+        <button class="drive-key turn" id="manual-e" data-hold-mode="RR">
+          <span class="drive-keycap">E</span>
+          <span class="drive-label">Turn Right</span>
+        </button>
+
+        <button class="drive-key lateral" id="manual-a" data-hold-mode="L">
+          <span class="drive-keycap">A</span>
+          <span class="drive-label">Left</span>
+        </button>
+        <button class="drive-key reverse" id="manual-s" data-hold-mode="B">
+          <span class="drive-keycap">S</span>
+          <span class="drive-label">Backward</span>
+        </button>
+        <button class="drive-key lateral" id="manual-d" data-hold-mode="R">
+          <span class="drive-keycap">D</span>
+          <span class="drive-label">Right</span>
+        </button>
+
+        <button class="drive-stop" id="manual-space" data-hold-mode="N">
+          <span class="drive-keycap">Space</span>
+          <span class="drive-label">Stand / Neutral</span>
+        </button>
+        <button class="button ghost wide-button" id="override-release">Release Override</button>
+      </div>
+
+      <article class="panel" style="margin-top: 1rem;">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Calibration</span>
+            <h2>Six-Leg Servo Calibration</h2>
+            <p class="panel-copy">Select one physical leg at a time, tune its coxa/femur/tibia angles, and save it into the persistent calibration profile. Each preview still sends a full six-leg manual frame so the selected leg moves while the others stay at their saved neutral pose. The ESP firmware stays unchanged.</p>
+          </div>
+          <div class="status-chip idle" id="calibration-chip">Calibration idle</div>
+        </div>
+
+        <div class="info-grid calibration-info-grid">
+          <div class="info-card">
+            <strong>Status</strong>
+            <span id="calibration-status">Waiting for calibration command.</span>
+          </div>
+          <div class="info-card">
+            <strong>Selected Leg</strong>
+            <span id="calibration-selected-leg">L1</span>
+          </div>
+          <div class="info-card">
+            <strong>Completed</strong>
+            <span id="calibration-progress">0 / 6 saved</span>
+          </div>
+          <div class="info-card">
+            <strong>Selected Servo</strong>
+            <span id="calibration-selected-joint">Coxa</span>
+          </div>
+          <div class="info-card">
+            <strong>Last Pose</strong>
+            <span id="calibration-last-pose">90.0 / 64.2 / 116.3</span>
+          </div>
+        </div>
+
+        <div class="info-card calibration-command-card">
+          <strong>Last Sent Command</strong>
+          <code id="calibration-last-command">Not sent yet.</code>
+        </div>
+
+        <div class="calibration-layout">
+          <div class="calibration-leg-grid">
+            <button class="calibration-leg-card active" type="button" data-calibration-leg="0">
+              <span class="calibration-leg-label">L1</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+            <button class="calibration-leg-card" type="button" data-calibration-leg="1">
+              <span class="calibration-leg-label">L2</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+            <button class="calibration-leg-card" type="button" data-calibration-leg="2">
+              <span class="calibration-leg-label">L3</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+            <button class="calibration-leg-card" type="button" data-calibration-leg="3">
+              <span class="calibration-leg-label">R1</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+            <button class="calibration-leg-card" type="button" data-calibration-leg="4">
+              <span class="calibration-leg-label">R2</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+            <button class="calibration-leg-card" type="button" data-calibration-leg="5">
+              <span class="calibration-leg-label">R3</span>
+              <span class="calibration-leg-state">Pending</span>
+            </button>
+          </div>
+
+          <div class="calibration-editor">
+            <div class="panel-head calibration-editor-head">
+              <div>
+                <span class="panel-label">Editing</span>
+                <h2 id="calibration-editor-title">L1</h2>
+                <p class="panel-copy" id="calibration-leg-detail">Pending save. Use Send to preview and Save Leg to persist this neutral pose.</p>
+              </div>
+            </div>
+
+            <div class="field-grid calibration-field-grid">
+              <div class="field">
+                <label for="calibration-coxa">Coxa (deg) <span id="calibration-coxa-value">90</span></label>
+                <input id="calibration-coxa" type="range" min="0" max="180" step="0.1" value="90">
+              </div>
+              <div class="field">
+                <label for="calibration-femur">Femur (deg) <span id="calibration-femur-value">64.2</span></label>
+                <input id="calibration-femur" type="range" min="0" max="180" step="0.1" value="64.2">
+              </div>
+              <div class="field">
+                <label for="calibration-tibia">Tibia (deg) <span id="calibration-tibia-value">116.3</span></label>
+                <input id="calibration-tibia" type="range" min="0" max="180" step="0.1" value="116.3">
+              </div>
+              <div class="field full">
+                <label>Apply Mode</label>
+                <div class="checkbox-row">
+                  <input id="calibration-auto-apply" type="checkbox">
+                  <span>Auto apply while sliders move. Calibration will stop runtime first and keep Xbox active for trimming.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="calibration-joint-toolbar">
+              <div class="calibration-joint-selector" role="group" aria-label="Calibration joint selection">
+                <button class="calibration-joint-button active" type="button" data-calibration-joint="coxa_deg">Y · Coxa</button>
+                <button class="calibration-joint-button" type="button" data-calibration-joint="femur_deg">X · Femur</button>
+                <button class="calibration-joint-button" type="button" data-calibration-joint="tibia_deg">A · Tibia</button>
+              </div>
+              <p class="panel-copy calibration-xbox-copy">Xbox calibration: `Y / X / A` select servo, `LB / RB` switch leg, right stick `Y` adjusts the selected servo, and `B` saves the current leg. Each preview still sends the full six-leg manual frame without changing the ESP firmware.</p>
+            </div>
+
+            <div class="info-card calibration-preview-card">
+              <strong>Frame Preview</strong>
+              <code id="calibration-command-preview">N:90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3</code>
+            </div>
+
+            <div class="button-row" style="margin-top: 1rem;">
+              <button class="button primary" id="calibration-send">Send Current Angles</button>
+              <button class="button secondary" id="calibration-save">Save Leg</button>
+              <button class="button ghost" id="calibration-neutral">Load Neutral Pose</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <details class="details-card">
+        <summary>Advanced Runtime Settings</summary>
+        <div class="details-body field-grid">
+          <div class="field">
+            <label for="runtime-port">Serial Port</label>
+            <input id="runtime-port" type="text">
+          </div>
+          <div class="field">
+            <label for="runtime-baudrate">Baudrate</label>
+            <input id="runtime-baudrate" type="number" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-leg-count">Leg Count</label>
+            <input id="runtime-leg-count" type="number" min="1" max="6" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-deadzone">Deadzone</label>
+            <input id="runtime-deadzone" type="number" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-stride">Stride (mm)</label>
+            <input id="runtime-stride" type="number" min="1" step="1">
+          </div>
+          <div class="field">
+            <label for="runtime-lift-scale">Lift Scale</label>
+            <input id="runtime-lift-scale" type="number" min="0.1" step="0.05">
+          </div>
+          <div class="field">
+            <label for="runtime-frequency">Frequency (Hz)</label>
+            <input id="runtime-frequency" type="number" min="0.05" step="0.05">
+          </div>
+          <div class="field">
+            <label for="runtime-yaw-stride-deg">Yaw Stride (deg)</label>
+            <input id="runtime-yaw-stride-deg" type="number" min="0.5" step="0.5">
+          </div>
+          <div class="field">
+            <label for="runtime-stance-z">Stance Z (mm)</label>
+            <input id="runtime-stance-z" type="number" max="-1" step="5">
+          </div>
+          <div class="field full">
+            <label>Verbose Logging</label>
+            <div class="checkbox-row">
+              <input id="runtime-verbose" type="checkbox">
+              <span>Keep runtime logging visible in the browser.</span>
+            </div>
+          </div>
+        </div>
+      </details>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Runtime Status</span>
+            <h2>Manual Mode Readout</h2>
+          </div>
+        </div>
+        <div class="info-card">
+          <strong>Runtime Command</strong>
+          <code id="runtime-command-preview">Loading...</code>
+        </div>
+        <div class="info-card">
+          <strong>Override File</strong>
+          <code id="override-file-readout">Loading...</code>
+        </div>
+        <div class="info-card">
+          <strong>Runtime Detail</strong>
+          <span id="manual-runtime-detail">Waiting for runtime status.</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Logs</span>
+            <h2>Runtime Log</h2>
+          </div>
+        </div>
+        <pre id="runtime-log">Waiting for runtime logs...</pre>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

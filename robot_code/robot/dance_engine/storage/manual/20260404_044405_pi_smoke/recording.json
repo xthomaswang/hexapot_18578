@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "mode": "manual",
+  "name": "pi_smoke",
+  "directory_name": "20260404_044405_pi_smoke",
+  "started_at": 1775292245.533525,
+  "stopped_at": 1775292245.5736423,
+  "duration_sec": 0.04,
+  "event_count": 2,
+  "events": [
+    {
+      "t": 0.016,
+      "active": true,
+      "mode": "F",
+      "magnitude": 600,
+      "forward_cmd": 600,
+      "strafe_cmd": 0,
+      "turn_cmd": 0,
+      "source": "web"
+    },
+    {
+      "t": 0.029,
+      "active": false,
+      "mode": "N",
+      "magnitude": 0,
+      "forward_cmd": 0,
+      "strafe_cmd": 0,
+      "turn_cmd": 0,
+      "source": "web",
+      "reason": "clear"
+    }
+  ]
+}

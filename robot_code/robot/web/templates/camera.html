@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="camera-start-detect">Start Detect Camera</button>
+  <button class="button ghost" id="camera-start-raw">Start Raw Camera</button>
+  <button class="button ghost" id="camera-stop">Stop Camera</button>
+{% endblock %}
+
+{% block content %}
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Camera Stream</span>
+          <h2>Vision Console</h2>
+          <p class="panel-copy">Use raw mode for framing and focus, or detect mode for AprilTag overlays and calibration feedback.</p>
+        </div>
+        <div class="status-chip idle" id="camera-page-chip">Camera idle</div>
+      </div>
+      <div class="camera-stage camera-stage-large">
+        <img id="camera-stream" class="hidden" alt="Robot camera stream">
+        <iframe id="camera-frame" class="camera-frame hidden" title="Robot camera live view" loading="lazy"></iframe>
+        <div class="camera-empty" id="camera-empty">Camera service is stopped. Use the buttons above to start detect or raw mode.</div>
+      </div>
+      <div class="link-list horizontal">
+        <a id="camera-page-link" href="#" target="_blank" rel="noreferrer">Vision service page</a>
+        <a id="camera-stream-link" href="#" target="_blank" rel="noreferrer">MJPEG stream</a>
+      </div>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Status</span>
+            <h2>Camera Summary</h2>
+          </div>
+        </div>
+        <div class="info-grid camera-summary-grid">
+          <div class="info-card">
+            <strong>Service</strong>
+            <span id="camera-summary">Loading...</span>
+          </div>
+          <div class="info-card">
+            <strong>Mode</strong>
+            <span id="camera-mode-chip">Camera mode: --</span>
+          </div>
+          <div class="info-card">
+            <strong>Tags</strong>
+            <span id="tag-count-chip">Tags: --</span>
+            <p id="tag-ids-chip">IDs: --</p>
+          </div>
+          <div class="info-card">
+            <strong>Calibration</strong>
+            <span id="calibration-state">Waiting for camera</span>
+            <p id="calibration-detail">Start detect mode to read AprilTags.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Camera Settings</span>
+            <h2>Start Options</h2>
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="camera-host">Host</label>
+            <input id="camera-host" type="text">
+          </div>
+          <div class="field">
+            <label for="camera-port">Port</label>
+            <input id="camera-port" type="number" min="1" step="1">
+          </div>
+          <div class="field full">
+            <label for="camera-detector">Detector</label>
+            <input id="camera-detector" type="text">
+          </div>
+        </div>
+        <div class="info-card">
+          <strong>Command Preview</strong>
+          <code id="camera-command-preview">Loading...</code>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Logs</span>
+            <h2>Camera Log</h2>
+          </div>
+        </div>
+        <pre id="camera-log">Waiting for camera logs...</pre>
+      </article>
+    </aside>
+  </section>
+{% endblock %}
