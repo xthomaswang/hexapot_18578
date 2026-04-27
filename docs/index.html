@@ -29,7 +29,7 @@
 
   <section class="hero">
     <h1>Peas in a <span>HexaPod</span></h1>
-    <p class="subtitle">A six-legged performance robot with servo actuation, onboard vision, and tripod gait control</p>
+    <p class="subtitle">A six-legged performance robot with servo actuation, onboard vision, and a browser-based operator workflow</p>
     <p class="course-info">CMU Mechatronic Design (18-578 / 16-778 / 24-778) | Spring 2026 | Team 6</p>
     <div class="hero-carousel">
       <div class="carousel-track">
@@ -82,19 +82,16 @@
 
   <main class="content">
     <section class="section">
-      <h2>Problem Description</h2>
+      <h2>Project At A Glance</h2>
       <p>
-        Team 6 is building a large hexapod robot that can perform choreographed walking and dance-like motions
-        while remaining stable, safe, and modular enough to transport between demos. The project combines
-        locomotion, embedded control, perception, and mechanical integration in a single performance platform.
+        Team 6 built a large hexapod performance robot that brings together six-legged actuation,
+        embedded control, simulation, onboard perception, and a user-friendly browser dashboard.
+        The project goal is a safe, modular robot platform for walking and dance-like motion demos.
       </p>
       <p>
-        Our current architecture uses <strong>18 high-torque servos</strong> across six 3-DOF legs,
-        an <strong>ESP32</strong> for low-level real-time control, and a <strong>Raspberry Pi 5</strong> for
-        gait generation, calibration, camera-based computer vision, and the browser-based operator
-        dashboard. The robot also includes an <strong>IMU, wireless control path, emergency stop,
-        and AprilTag-ready camera stack</strong> to support safe manual operation and future autonomous
-        alignment tasks.
+        The final architecture uses <strong>18 high-torque servo channels</strong> across six 3-DOF legs,
+        an <strong>ESP32</strong> for low-level control, and a <strong>Raspberry Pi 5</strong> for
+        inverse kinematics, calibration, vision, and operator-facing tools.
       </p>
 
       <div class="figure medium">
@@ -104,54 +101,27 @@
     </section>
 
     <section class="section">
-      <h2>Current Snapshot</h2>
+      <h2>Final Status Snapshot</h2>
       <div class="status-grid">
         <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>Final Integrated Build</h3>
+          <p>Six legs, power distribution, embedded control, Pi compute, camera hardware, and dashboard tooling were integrated for the April demos.</p>
+        </div>
+        <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>Operator Workflow</h3>
+          <p>The browser dashboard supports runtime control, manual motion, calibration, camera inspection, auto mode, and dance sequence work.</p>
+        </div>
+        <div class="status-card">
           <span class="badge in-progress">In Progress</span>
-          <h3>Six-Leg IK Actuation</h3>
-          <p>All six powered legs can respond to IK-engine commands; sustained forward/backward walking is still not achieved.</p>
+          <h3>Motion Outcome</h3>
+          <p>Six-leg IK actuation works; reliable body translation remains unresolved and is detailed on the Performance page.</p>
         </div>
         <div class="status-card">
           <span class="badge complete">Complete</span>
-          <h3>MuJoCo Gait Simulation</h3>
-          <p>The full six-leg robot is simulated with tripod gait phasing, gravity, contact, and joint limits.</p>
-        </div>
-        <div class="status-card">
-          <span class="badge in-progress">In Progress</span>
-          <h3>Hardware Integration</h3>
-          <p>The integrated robot can actuate its legs under power, but body translation remains blocked by gait, traction, and load tuning.</p>
-        </div>
-        <div class="status-card">
-          <span class="badge complete">Complete</span>
-          <h3>AprilTag Vision Bring-Up</h3>
-          <p>The Raspberry Pi 5 camera stack detects multiple AprilTags in real time and is ready for pose estimation work.</p>
-        </div>
-        <div class="status-card">
-          <span class="badge complete">Complete</span>
-          <h3>Browser Control UI</h3>
-          <p>A hosted dashboard now covers deployment, manual drive, calibration, camera, auto mode, and dance recording workflows.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Key Features</h2>
-      <div class="status-grid">
-        <div class="status-card">
-          <h3>18 Servo Joints</h3>
-          <p>Six legs with coxa, femur, and tibia joints provide the maneuverability needed for tripod gait and expressive motion.</p>
-        </div>
-        <div class="status-card">
-          <h3>Split Compute Architecture</h3>
-          <p>The Raspberry Pi handles planning and perception while the ESP32 handles timing-sensitive PWM output and control logic.</p>
-        </div>
-        <div class="status-card">
-          <h3>Physics-Backed Development</h3>
-          <p>MuJoCo simulation lets the team tune geometry, gait timing, and stability before committing changes to hardware.</p>
-        </div>
-        <div class="status-card">
-          <h3>Media-Rich Lab Workbook</h3>
-          <p>The Documents and Media pages capture proposal work, ILRs, bench photos, simulations, and integration evidence.</p>
+          <h3>Submission Archive</h3>
+          <p>Proposal files, ILRs, Check 3 links, implementation media, and open final-report placeholders are organized for grading.</p>
         </div>
       </div>
     </section>
@@ -160,16 +130,28 @@
       <h2>Where To Look Next</h2>
       <div class="split-grid">
         <div class="card">
-          <h3><a href="pages/implementation.html">System Implementation</a></h3>
-          <p>See the current mechanical, electrical, software, and computer-vision progress with recent build photos.</p>
+          <h3><a href="pages/system-design.html">System Design</a></h3>
+          <p>Why the team chose this architecture, including requirements, subsystem partitioning, and trade studies.</p>
         </div>
         <div class="card">
-          <h3><a href="pages/performance.html">System Performance</a></h3>
-          <p>Review which requirements are already supported by simulation or bench tests and which remain pending full-system verification.</p>
+          <h3><a href="pages/implementation.html">Implementation</a></h3>
+          <p>What was built across mechanical assembly, electrical power, embedded control, software, dashboard, and vision.</p>
+        </div>
+        <div class="card">
+          <h3><a href="pages/performance.html">Performance</a></h3>
+          <p>How well the final system worked, including the formal requirement matrix and remaining gaps.</p>
+        </div>
+        <div class="card">
+          <h3><a href="pages/media.html">Media</a></h3>
+          <p>Demo clips, robot photos, dashboard screenshots, simulation GIFs, and hardware evidence.</p>
+        </div>
+        <div class="card">
+          <h3><a href="pages/management.html">Management</a></h3>
+          <p>Schedule, demo milestones, procurement snapshot, and integration issue log.</p>
         </div>
         <div class="card">
           <h3><a href="pages/documents.html">Documents</a></h3>
-          <p>Browse the organized lab-workbook archive, including proposal files and ILR rounds 1 through 9.</p>
+          <p>Submission archive for proposal files, ILRs 1 through 9, Check 3 materials, and pending final artifacts.</p>
         </div>
       </div>
     </section>

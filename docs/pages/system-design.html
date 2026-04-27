@@ -29,13 +29,13 @@
 
   <header class="page-header">
     <h1>System Design</h1>
-    <p>Requirements, subsystem partitioning, and design decisions behind the current robot architecture</p>
+    <p>Requirements, architectures, trade studies, and design rationale for the robot</p>
   </header>
 
   <main class="content">
     <section class="section">
       <h2>System Requirements</h2>
-      <p>The website tracks the current design against the team’s project requirements for locomotion, packaging, safety, and integration.</p>
+      <p>This page explains the architecture chosen to satisfy the team's requirements for locomotion, packaging, safety, and integration.</p>
 
       <div class="req-category">
         <h4>Locomotion &amp; Maneuvering</h4>
@@ -109,7 +109,7 @@
 
     <section class="section">
       <h2>Cyberphysical Architecture</h2>
-      <p>The current implementation has converged on a servo-driven architecture rather than the earlier BLDC concept, because it supports faster subsystem integration and lower-risk debugging.</p>
+      <p>The selected cyberphysical architecture uses high-torque servos rather than the earlier BLDC concept because it supports faster subsystem integration, simpler command routing, and lower-risk debugging within the semester schedule.</p>
 
       <div class="figure medium">
         <img src="../assets/images/proposal/5_cyberphysical_architecture.png" alt="Cyberphysical architecture diagram">
@@ -118,7 +118,7 @@
 
       <div class="table-wrapper">
         <table>
-          <thead><tr><th>Domain</th><th>Current Components</th><th>Role</th></tr></thead>
+          <thead><tr><th>Domain</th><th>Selected Components</th><th>Role</th></tr></thead>
           <tbody>
             <tr><td><strong>Perception</strong></td><td>Raspberry Pi 5 camera module, IMU, emergency stop</td><td>AprilTag detection, state awareness, and safety monitoring inputs</td></tr>
             <tr><td><strong>High-Level Compute</strong></td><td>Raspberry Pi 5</td><td>Inverse kinematics, gait generation, simulation alignment, calibration, and future navigation logic</td></tr>
@@ -132,7 +132,7 @@
     </section>
 
     <section class="section">
-      <h2>Current Design Rationale</h2>
+      <h2>Design Rationale</h2>
 
       <div class="figure medium">
         <img src="../assets/images/cad/CAD.png" alt="CAD rendering of the hexapod design">
@@ -142,7 +142,7 @@
       <div class="card">
         <h3>Actuation &amp; Leg Geometry</h3>
         <p>The robot uses six identical legs with three joints per leg: coxa for horizontal sweep, femur for upper-leg lift, and tibia for ground reach. A servo-based actuation stack gives the team a simpler control and integration path than a distributed BLDC controller network, which is important for the semester schedule and incremental bench testing.</p>
-        <p>Current geometry work is shared across CAD, the IK solver, and MuJoCo so that updates to leg lengths or mounting positions propagate consistently through the project.</p>
+        <p>The leg geometry model is shared across CAD, the IK solver, and MuJoCo so that updates to leg lengths or mounting positions propagate consistently through the project.</p>
       </div>
 
       <div class="card">
