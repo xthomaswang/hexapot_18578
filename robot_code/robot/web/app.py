@@ -509,6 +509,10 @@ def create_app(
             )
         )
 
+    @app.get("/api/uart_log")
+    def uart_log() -> Any:
+        return jsonify(runtime_manager.uart_snapshot())
+
     @app.post("/api/runtime/start")
     def start_runtime() -> Any:
         try:

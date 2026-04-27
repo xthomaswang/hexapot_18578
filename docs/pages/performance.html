@@ -10,7 +10,7 @@
 
   <nav class="navbar">
     <div class="container">
-      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <a href="../index.html" class="logo"><span>Team 6</span> | Peas in a HexaPod</a>
       <button class="hamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
@@ -36,7 +36,7 @@
     <section class="section">
       <h2>Performance Snapshot</h2>
       <div class="callout">
-        <p><strong>Important:</strong> This page distinguishes between simulation evidence, bench-test evidence, and full-system hardware verification. Items stay pending until the team has measured them on the integrated robot.</p>
+        <p><strong>Important:</strong> This page distinguishes between simulation evidence, bench-test evidence, and full-system hardware verification. As of April 27, all six legs can move under IK control, but stable directional locomotion is still pending.</p>
       </div>
       <div class="kpi-grid">
         <div class="kpi-card">
@@ -44,8 +44,8 @@
           <div class="kpi-value">20&ndash;25 fps</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-label">Physical Legs Under Gait</div>
-          <div class="kpi-value">1</div>
+          <div class="kpi-label">Powered Legs Moving</div>
+          <div class="kpi-value">6</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Legs Simulated</div>
@@ -54,6 +54,10 @@
         <div class="kpi-card">
           <div class="kpi-label">Servo Channels Addressed</div>
           <div class="kpi-value">18</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Full Translation</div>
+          <div class="kpi-value">Pending</div>
         </div>
       </div>
     </section>
@@ -79,10 +83,16 @@
               <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
+              <td>Six-leg powered IK actuation</td>
+              <td>Move all six legs from software-generated joint targets</td>
+              <td>Integrated robot demo shows all legs powered and responding to the IK-engine command path</td>
+              <td><span class="badge complete">Complete</span></td>
+            </tr>
+            <tr>
               <td>Controller-to-servo command path</td>
-              <td>Drive physical motion from the embedded stack</td>
-              <td>Bench-tested through ESP32 / PWM stack on a single leg</td>
-              <td><span class="badge in-progress">In Progress</span></td>
+              <td>Drive physical motion from the embedded stack and browser UI</td>
+              <td>Runtime, manual control, calibration, and dance pages are hosted on the robot dashboard</td>
+              <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
               <td>Onboard vision</td>
@@ -93,20 +103,20 @@
             <tr>
               <td>Forward / backward walking on full robot</td>
               <td>Repeatable physical walking demonstration</td>
-              <td>Not yet demonstrated on the assembled six-leg platform</td>
+              <td>Not yet demonstrated; legs move but the body does not translate reliably</td>
               <td><span class="badge pending">Pending</span></td>
             </tr>
             <tr>
               <td>Turn in place on full robot</td>
               <td>Physical turning demo</td>
-              <td>Supported in software and simulation; pending full hardware integration</td>
-              <td><span class="badge pending">Pending</span></td>
+              <td>Possible in limited tests, but not yet verified as a repeatable capability</td>
+              <td><span class="badge in-progress">In Progress</span></td>
             </tr>
             <tr>
               <td>Payload support</td>
               <td>170 lb rider / payload target</td>
-              <td>Final load test not yet performed</td>
-              <td><span class="badge pending">Pending</span></td>
+              <td>Human seated demo clip captured; dynamic walking under rider load is not verified</td>
+              <td><span class="badge in-progress">In Progress</span></td>
             </tr>
             <tr>
               <td>Ride height</td>
@@ -123,7 +133,7 @@
             <tr>
               <td>Safety interlock behavior</td>
               <td>Detect unsafe state and stop motion</td>
-              <td>Safety architecture defined; integrated full-system validation still pending</td>
+              <td>Safety architecture defined; integrated full-system shutdown validation still pending</td>
               <td><span class="badge in-progress">In Progress</span></td>
             </tr>
           </tbody>
@@ -144,10 +154,10 @@
         </div>
         <div class="card">
           <h3>Bench Hardware Actuation</h3>
-          <p>The single-leg bench test is the strongest current hardware validation. It confirms that the control stack can command a real servo-driven mechanism, even though the full robot is not yet assembled.</p>
+          <p>The strongest current hardware validation is the integrated six-leg power-on demo. Earlier single-leg bench tests proved the command path; the current robot now moves all six legs but still needs gait and contact tuning before it can walk reliably.</p>
           <div class="figure">
             <img src="../assets/images/progress/single-leg-bench-test.png" alt="Single leg bench performance test">
-            <figcaption>Figure 2: Bench evidence for physical gait execution on one leg.</figcaption>
+            <figcaption>Figure 2: Earlier bench evidence for physical gait execution on one leg.</figcaption>
           </div>
         </div>
       </div>
@@ -168,6 +178,22 @@
             <img src="../assets/images/simulation/mujoco-gait-topdown.png" alt="Top-down view of MuJoCo gait">
             <figcaption>Figure 4: Top-down simulation view used to inspect body geometry and gait spacing.</figcaption>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Check 3 Demo Evidence</h2>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Six-Leg Powered Motion</h3>
+          <p>This demo shows the integrated robot with all six legs powered and moving from the current IK/control stack. The robot is not yet able to translate forward or backward reliably.</p>
+          <p><a href="https://drive.google.com/file/d/1vAjFn6D3zknHv9pkMcUaOYQrnXKtU4Et/view">Open six-leg motion demo</a></p>
+        </div>
+        <div class="card">
+          <h3>Human Seated Test</h3>
+          <p>This demo records the robot under a seated human load. It supports payload integration evidence, but it is not a completed walking performance test.</p>
+          <p><a href="https://drive.google.com/file/d/1BPvLNKuynJsscaGCUe7A9-_UgIsXdexo/view">Open seated test demo</a></p>
         </div>
       </div>
     </section>
@@ -196,7 +222,7 @@
   </main>
 
   <footer class="footer">
-    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Peas in a HexaPod</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 

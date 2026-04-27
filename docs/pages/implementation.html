@@ -10,7 +10,7 @@
 
   <nav class="navbar">
     <div class="container">
-      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <a href="../index.html" class="logo"><span>Team 6</span> | Peas in a HexaPod</a>
       <button class="hamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
@@ -35,19 +35,26 @@
   <main class="content">
     <section class="section">
       <h2>Implementation Summary</h2>
-      <p>The project has moved past proposal-only material and into staged subsystem validation. Core kinematics, simulation, camera bring-up, and single-leg hardware tests are all running; full six-leg hardware integration is the next major step.</p>
+      <p>The project has moved past proposal-only material and into staged subsystem validation. Core kinematics, simulation, camera bring-up, and the hosted control dashboard are running. All six powered legs can move from IK-engine commands, but the robot does not yet perform stable directional locomotion.</p>
+      <div class="callout">
+        <p><strong>Check 3 status:</strong> The final integrated state is a powered six-leg platform with complete software control surfaces and demo evidence, not a fully walking robot. Rotation may be possible, but forward/backward translation has not been verified.</p>
+      </div>
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">Joints Modeled</div>
           <div class="kpi-value">18</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-label">Legs Bench-Tested</div>
-          <div class="kpi-value">1</div>
+          <div class="kpi-label">Powered Legs Moving</div>
+          <div class="kpi-value">6</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Legs Simulated</div>
           <div class="kpi-value">6</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Dashboard Pages</div>
+          <div class="kpi-value">7</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">AprilTag Throughput</div>
@@ -58,13 +65,22 @@
 
     <section class="section">
       <h2>Mechanical &amp; Actuation Build</h2>
+      <div class="card">
+        <h3>Final Integrated Six-Leg Assembly</h3>
+        <p>The current robot has all six legs mounted to the central frame with onboard wiring routed through the body. This is the hardware configuration used for the final demo and encore demo evidence.</p>
+        <div class="figure medium">
+          <img src="../assets/images/progress/final-hexapod-assembly.jpg" alt="Final integrated six-leg robot assembly">
+          <figcaption>Figure 1: Final integrated Peas in a HexaPod hardware assembly used during the April demo period.</figcaption>
+        </div>
+      </div>
+
       <div class="split-grid">
         <div class="card">
           <h3>Single-Leg Prototype</h3>
           <p>The team built and iterated on a physical leg prototype to validate link dimensions, mounting clearances, and bracket geometry before full chassis assembly.</p>
           <div class="figure">
             <img src="../assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype on the workbench">
-            <figcaption>Figure 1: Early full-scale leg prototype used to check dimensions and assembly layout.</figcaption>
+            <figcaption>Figure 2: Early full-scale leg prototype used to check dimensions and assembly layout.</figcaption>
           </div>
         </div>
         <div class="card">
@@ -72,7 +88,7 @@
           <p>V2 bracket revisions improved the fit for the Spektrum S6510 servos and aligned the mounting pattern more reliably with the intended mechanical stack.</p>
           <div class="figure">
             <img src="../assets/images/progress/s6510-bracket.png" alt="Servo mounted in the V2 bracket">
-            <figcaption>Figure 2: Updated bracket geometry matching the current servo packaging.</figcaption>
+            <figcaption>Figure 3: Updated bracket geometry matching the current servo packaging.</figcaption>
           </div>
         </div>
       </div>
@@ -82,7 +98,7 @@
         <p>A hardware test leg now executes controller-generated motion on the bench. This validates the software-to-servo pipeline: IK targets are converted into PWM commands and passed through the embedded stack to the physical actuator.</p>
         <div class="figure medium">
           <img src="../assets/images/progress/single-leg-bench-test.png" alt="Single leg bench test">
-          <figcaption>Figure 3: Single-leg bench setup demonstrating gait-driven servo motion.</figcaption>
+          <figcaption>Figure 4: Single-leg bench setup demonstrating gait-driven servo motion.</figcaption>
         </div>
       </div>
     </section>
@@ -174,6 +190,31 @@
     </section>
 
     <section class="section">
+      <h2>Operator Dashboard</h2>
+      <p>The Raspberry Pi now hosts a user-friendly browser dashboard at the robot control endpoint. The interface wraps the runtime, manual driving, servo calibration, camera console, automated mode, and dance recording tools so the robot can be operated without command-line access during demos.</p>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/dashboard.png" alt="Robot dashboard overview page">
+          <figcaption>Figure 12: Dashboard overview showing runtime, camera, calibration, UART, and quick navigation state.</figcaption>
+        </div>
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/manual.png" alt="Manual robot control page">
+          <figcaption>Figure 13: Manual control page for deploying runtime and commanding robot motion from the browser.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/calibration-leg-saved.png" alt="Six-leg calibration page with saved leg offsets">
+          <figcaption>Figure 14: Six-leg servo calibration workflow showing saved leg offsets and per-joint trim controls.</figcaption>
+        </div>
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/dance-encoding.png" alt="Dance encoding page">
+          <figcaption>Figure 15: Manual dance encoding page used to turn operator input into reusable motion sequences.</figcaption>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
       <h2>Integration Snapshot</h2>
       <div class="table-wrapper">
         <table>
@@ -181,12 +222,13 @@
             <tr><th>Subsystem</th><th>Current Implementation</th><th>Status</th><th>Next Step</th></tr>
           </thead>
           <tbody>
-            <tr><td>Leg mechanics</td><td>Prototype leg, revised servo brackets, assembled single-leg bench rig</td><td><span class="badge in-progress">In Progress</span></td><td>Scale to multi-leg assembly</td></tr>
-            <tr><td>Embedded control</td><td>ESP32 bench setup with PWM path and controller integration</td><td><span class="badge in-progress">In Progress</span></td><td>Stabilize full wiring harness and Pi-to-ESP32 link</td></tr>
-            <tr><td>IK / gait software</td><td>Single-leg and full-body gait generation implemented</td><td><span class="badge complete">Complete</span></td><td>Tune against physical robot behavior</td></tr>
+            <tr><td>Leg mechanics</td><td>Six powered legs assembled enough to move under IK-generated commands</td><td><span class="badge in-progress">In Progress</span></td><td>Improve load transfer, traction, and body-level motion</td></tr>
+            <tr><td>Embedded control</td><td>ESP32 / PWM command path can actuate all legs through the current runtime</td><td><span class="badge in-progress">In Progress</span></td><td>Continue reliability tuning under full load</td></tr>
+            <tr><td>IK / gait software</td><td>Single-leg and full-body gait generation implemented and connected to hardware control</td><td><span class="badge complete">Complete</span></td><td>Tune gait parameters against physical robot behavior</td></tr>
             <tr><td>Simulation</td><td>MuJoCo six-leg walking model with contact and joint limits</td><td><span class="badge complete">Complete</span></td><td>Use for parameter tuning and regression checks</td></tr>
             <tr><td>Vision</td><td>Pi camera streaming and AprilTag detection running</td><td><span class="badge complete">Complete</span></td><td>Add pose estimation and calibration logic</td></tr>
-            <tr><td>Full robot hardware</td><td>Not yet fully assembled and verified under gait</td><td><span class="badge pending">Pending</span></td><td>Complete wiring cleanup and six-leg integration</td></tr>
+            <tr><td>Web dashboard</td><td>Dashboard, manual, calibration, auto, camera, and dance pages hosted on the robot</td><td><span class="badge complete">Complete</span></td><td>Use as the main operator interface for demos</td></tr>
+            <tr><td>Full robot locomotion</td><td>Six-leg actuation works, but stable directional walking has not been demonstrated</td><td><span class="badge pending">Pending</span></td><td>Tune gait, contact, power, and mechanical loading</td></tr>
           </tbody>
         </table>
       </div>
@@ -194,7 +236,7 @@
   </main>
 
   <footer class="footer">
-    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Peas in a HexaPod</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 

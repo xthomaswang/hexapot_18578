@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CMU Mechatronics 2026 Team 6 - Hexapod Dancing Robot</title>
+  <title>CMU Mechatronics 2026 Team 6 - Peas in a HexaPod</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
   <nav class="navbar">
     <div class="container">
-      <a href="index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <a href="index.html" class="logo"><span>Team 6</span> | Peas in a HexaPod</a>
       <button class="hamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
@@ -28,7 +28,7 @@
   </nav>
 
   <section class="hero">
-    <h1>Hexapod <span>Dancing Robot</span></h1>
+    <h1>Peas in a <span>HexaPod</span></h1>
     <p class="subtitle">A six-legged performance robot with servo actuation, onboard vision, and tripod gait control</p>
     <p class="course-info">CMU Mechatronic Design (18-578 / 16-778 / 24-778) | Spring 2026 | Team 6</p>
     <div class="hero-carousel">
@@ -39,19 +39,39 @@
           <p class="carousel-caption">Current CAD layout for the rectangular six-leg platform</p>
         </div>
         <div class="carousel-slide" data-index="1">
-          <img src="assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype on the workbench">
+          <img src="assets/images/progress/final-hexapod-assembly.jpg" alt="Final integrated hexapod robot in the lab">
           <div class="carousel-overlay"></div>
-          <p class="carousel-caption">Physical single-leg prototype used for early fit and motion validation</p>
+          <p class="carousel-caption">Final integrated six-leg robot assembled for the April demos</p>
         </div>
         <div class="carousel-slide" data-index="2">
-          <img src="assets/images/simulation/mujoco-gait-topdown.png" alt="MuJoCo top-down view of the hexapod gait">
+          <img src="assets/images/progress/motors-power-wiring-bench-web.jpg" alt="Power and wiring bench for the robot">
           <div class="carousel-overlay"></div>
-          <p class="carousel-caption">MuJoCo simulation used to validate stance stability and gait phasing</p>
+          <p class="carousel-caption">Electrical integration bench for servo power distribution and wiring</p>
         </div>
         <div class="carousel-slide" data-index="3">
+          <img src="assets/images/simulation/mujoco-forward-backward.gif" alt="MuJoCo forward and backward gait animation">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">MuJoCo gait simulation for forward and backward tripod motion</p>
+        </div>
+        <div class="carousel-slide" data-index="4">
           <img src="assets/images/progress/raspi-apriltag-detection.png" alt="Raspberry Pi AprilTag detection test">
           <div class="carousel-overlay"></div>
           <p class="carousel-caption">Raspberry Pi 5 camera pipeline detecting AprilTags in real time</p>
+        </div>
+        <div class="carousel-slide" data-index="5">
+          <img src="assets/images/web-ui/dashboard.png" alt="Robot web dashboard">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Browser dashboard for user-friendly runtime, camera, and calibration control</p>
+        </div>
+        <div class="carousel-slide" data-index="6">
+          <img src="assets/images/web-ui/dance-encoding.png" alt="Dance encoding interface">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Dance encoding interface for turning manual control into reusable motion sequences</p>
+        </div>
+        <div class="carousel-slide" data-index="7">
+          <img src="assets/images/proposal/5_cyberphysical_architecture.png" alt="Cyberphysical architecture presentation diagram">
+          <div class="carousel-overlay"></div>
+          <p class="carousel-caption">Presentation diagram mapping compute, sensing, actuation, power, and operator control</p>
         </div>
       </div>
       <button class="carousel-btn carousel-prev" aria-label="Previous slide">&#10094;</button>
@@ -71,9 +91,10 @@
       <p>
         Our current architecture uses <strong>18 high-torque servos</strong> across six 3-DOF legs,
         an <strong>ESP32</strong> for low-level real-time control, and a <strong>Raspberry Pi 5</strong> for
-        gait generation, calibration, and camera-based computer vision. The robot also includes an
-        <strong>IMU, wireless control path, emergency stop, and AprilTag-ready camera stack</strong>
-        to support safe manual operation and future autonomous alignment tasks.
+        gait generation, calibration, camera-based computer vision, and the browser-based operator
+        dashboard. The robot also includes an <strong>IMU, wireless control path, emergency stop,
+        and AprilTag-ready camera stack</strong> to support safe manual operation and future autonomous
+        alignment tasks.
       </p>
 
       <div class="figure medium">
@@ -86,9 +107,9 @@
       <h2>Current Snapshot</h2>
       <div class="status-grid">
         <div class="status-card">
-          <span class="badge complete">Complete</span>
-          <h3>Single-Leg IK Pipeline</h3>
-          <p>A full 3-DOF inverse kinematics solver drives a single-leg demo and generates hardware-ready servo commands.</p>
+          <span class="badge in-progress">In Progress</span>
+          <h3>Six-Leg IK Actuation</h3>
+          <p>All six powered legs can respond to IK-engine commands; sustained forward/backward walking is still not achieved.</p>
         </div>
         <div class="status-card">
           <span class="badge complete">Complete</span>
@@ -98,12 +119,17 @@
         <div class="status-card">
           <span class="badge in-progress">In Progress</span>
           <h3>Hardware Integration</h3>
-          <p>Bench tests have validated one physical leg, servo wiring, PWM control, and ESP32 integration.</p>
+          <p>The integrated robot can actuate its legs under power, but body translation remains blocked by gait, traction, and load tuning.</p>
         </div>
         <div class="status-card">
           <span class="badge complete">Complete</span>
           <h3>AprilTag Vision Bring-Up</h3>
           <p>The Raspberry Pi 5 camera stack detects multiple AprilTags in real time and is ready for pose estimation work.</p>
+        </div>
+        <div class="status-card">
+          <span class="badge complete">Complete</span>
+          <h3>Browser Control UI</h3>
+          <p>A hosted dashboard now covers deployment, manual drive, calibration, camera, auto mode, and dance recording workflows.</p>
         </div>
       </div>
     </section>
@@ -143,14 +169,14 @@
         </div>
         <div class="card">
           <h3><a href="pages/documents.html">Documents</a></h3>
-          <p>Browse the organized lab-workbook archive, including proposal files and ILR rounds 1 through 7.</p>
+          <p>Browse the organized lab-workbook archive, including proposal files and ILR rounds 1 through 9.</p>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Peas in a HexaPod</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 

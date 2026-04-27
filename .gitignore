@@ -25,3 +25,7 @@ node_modules/
 
 # Logs
 *.log
+
+# Unrelated files
+new/
+rubric/

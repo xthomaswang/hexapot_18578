@@ -509,6 +509,14 @@ a:hover {
   max-width: 450px;
 }
 
+.figure.web-ui img {
+  max-height: 560px;
+  width: auto;
+  object-fit: contain;
+  object-position: top;
+  background: var(--gray-100);
+}
+
 .figure figcaption {
   margin-top: 0.5rem;
   font-size: 0.9rem;

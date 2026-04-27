@@ -7,7 +7,7 @@ from typing import Sequence
 
 DEFAULT_SERIAL_PORT = "/dev/serial0"
 BAUD_RATE = 115200
-UPDATE_INTERVAL_S = 0.02
+UPDATE_INTERVAL_S = 0.05
 
 MOVE_ALL = "M"
 HOME = "H"

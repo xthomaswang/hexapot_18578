@@ -10,7 +10,7 @@
 
   <nav class="navbar">
     <div class="container">
-      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <a href="../index.html" class="logo"><span>Team 6</span> | Peas in a HexaPod</a>
       <button class="hamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
@@ -29,15 +29,68 @@
 
   <header class="page-header">
     <h1>Media</h1>
-    <p>Photos and simulation captures documenting the project’s current build state</p>
+    <p>Videos, dashboard screenshots, and build media documenting the project’s current build state</p>
   </header>
 
   <main class="content">
     <section class="section">
-      <h2>Project Video</h2>
-      <p>The edited final video has not been uploaded yet. Once it is available, this page will host the embedded video alongside the latest walking and subsystem-demo clips.</p>
+      <h2>Integration Demo Videos</h2>
+      <p>These clips document the Check 3 robot state: all six legs can move under power from the IK/control stack, but stable directional walking is still pending.</p>
+      <div class="split-grid">
+        <div class="card">
+          <h3>Six-Leg Motion Demo</h3>
+          <p>Powered integrated robot test. The legs move, but the body does not yet walk forward/backward reliably.</p>
+          <p><a href="https://drive.google.com/file/d/1vAjFn6D3zknHv9pkMcUaOYQrnXKtU4Et/view">Open Google Drive video</a></p>
+        </div>
+        <div class="card">
+          <h3>Human Seated Test</h3>
+          <p>Seated-load test showing the robot structure and actuation under human load.</p>
+          <p><a href="https://drive.google.com/file/d/1BPvLNKuynJsscaGCUe7A9-_UgIsXdexo/view">Open Google Drive video</a></p>
+        </div>
+      </div>
       <div class="callout">
-        <p>Until the final video is posted, this gallery serves as the visual project log for recent demos and build milestones.</p>
+        <p>The final edited public-presentation video is still a separate deliverable. These demo clips are the current integration evidence available for the website.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Robot Dashboard Screenshots</h2>
+      <p>The robot hosts a browser-based operator interface at the Raspberry Pi dashboard endpoint. These screenshots show the main UI surfaces used for runtime control, manual operation, calibration, automation, camera inspection, and dance workflow work.</p>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/dashboard.png" alt="Dashboard overview">
+          <figcaption>Dashboard overview with runtime, camera, calibration, UART, and page shortcuts.</figcaption>
+        </div>
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/manual.png" alt="Manual control page">
+          <figcaption>Manual control page for browser-based driving and deployment.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/auto.png" alt="Auto mode page">
+          <figcaption>Automated mode page combining camera state, calibration state, and dance presets.</figcaption>
+        </div>
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/calibration-leg-saved.png" alt="Calibration page with saved leg offsets">
+          <figcaption>Six-leg calibration page showing saved leg offsets and per-joint trim controls.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/dance-recorder.png" alt="Manual dance capture page">
+          <figcaption>Manual dance recorder for capturing operator-driven movement timelines.</figcaption>
+        </div>
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/dance-encoding.png" alt="Manual dance encoding page">
+          <figcaption>Dance encoding page for converting manual movement input into reusable sequences.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure web-ui">
+          <img src="../assets/images/web-ui/camera.png" alt="Camera console page">
+          <figcaption>Camera console for starting detection/raw camera modes and checking camera logs.</figcaption>
+        </div>
       </div>
     </section>
 
@@ -89,6 +142,16 @@
       <h2>Hardware Integration Gallery</h2>
       <div class="figure-row">
         <div class="figure">
+          <img src="../assets/images/progress/final-hexapod-assembly.jpg" alt="Final integrated six-leg robot assembly">
+          <figcaption>Final integrated Peas in a HexaPod hardware assembly used during the April demo period.</figcaption>
+        </div>
+        <div class="figure">
+          <img src="../assets/images/progress/full-hexapod-tripod-demo.png" alt="Full hexapod controller demo">
+          <figcaption>Software-side full-body tripod demo built on the shared gait engine.</figcaption>
+        </div>
+      </div>
+      <div class="figure-row">
+        <div class="figure">
           <img src="../assets/images/progress/single-leg-prototype.jpg" alt="Single leg prototype">
           <figcaption>Physical single-leg prototype used to validate geometry and assembly.</figcaption>
         </div>
@@ -111,10 +174,6 @@
         <div class="figure">
           <img src="../assets/images/progress/s6510-bracket.png" alt="Servo bracket">
           <figcaption>Updated servo bracket fit for the current actuation hardware.</figcaption>
-        </div>
-        <div class="figure">
-          <img src="../assets/images/progress/full-hexapod-tripod-demo.png" alt="Full hexapod controller demo">
-          <figcaption>Software-side full-body tripod demo built on the shared gait engine.</figcaption>
         </div>
       </div>
     </section>
@@ -145,7 +204,7 @@
   </main>
 
   <footer class="footer">
-    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Peas in a HexaPod</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 

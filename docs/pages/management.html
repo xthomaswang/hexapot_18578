@@ -10,7 +10,7 @@
 
   <nav class="navbar">
     <div class="container">
-      <a href="../index.html" class="logo"><span>Team 6</span> | Hexapod Dancing Robot</a>
+      <a href="../index.html" class="logo"><span>Team 6</span> | Peas in a HexaPod</a>
       <button class="hamburger" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
@@ -35,7 +35,7 @@
   <main class="content">
     <section class="section">
       <h2>Schedule</h2>
-      <p>The semester schedule is organized around progressive system demos. Recent work has focused on moving from procurement and design into simulation, bench hardware, and vision validation.</p>
+      <p>The semester schedule is organized around progressive system demos. Recent work has shifted from subsystem bring-up into final integration, hosted dashboard operation, and documenting what the robot can and cannot do at Check 3.</p>
       <div class="figure">
         <img src="../assets/images/proposal/7_timeline.png" alt="Project timeline">
         <figcaption>Figure 1: Team timeline from proposal through final integration and public presentation.</figcaption>
@@ -54,8 +54,11 @@
             <tr><td>System Demo 3</td><td>March 9, 2026</td><td>Single-leg IK demo, controller demo, physical leg prototype, near-final CAD</td><td><span class="badge complete">Complete</span></td></tr>
             <tr><td>System Demo 4</td><td>March 16, 2026</td><td>MuJoCo simulation, Pi camera bring-up, wiring bench, controller-to-servo bench work</td><td><span class="badge complete">Complete</span></td></tr>
             <tr><td>System Demo 5</td><td>March 23, 2026</td><td>AprilTag detection on Pi 5, single-leg hardware gait path, more leg hardware assembled</td><td><span class="badge complete">Complete</span></td></tr>
-            <tr><td>System Demo 6</td><td>April 6, 2026</td><td>Wiring cleanup, Pi-to-ESP32 integration, broader multi-leg hardware bring-up</td><td><span class="badge in-progress">In Progress</span></td></tr>
-            <tr><td>Final Integrated Demo</td><td>April 15, 2026</td><td>Full-system walking / performance behavior with verified subsystem integration</td><td><span class="badge pending">Pending</span></td></tr>
+            <tr><td>System Demo 6</td><td>April 6, 2026</td><td>Wiring cleanup, Pi-to-ESP32 integration, broader multi-leg hardware bring-up</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>Final System Demo</td><td>April 15, 2026</td><td>Presented final integrated robot status, including six-leg powered IK actuation and remaining locomotion limits</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>Final System Demo Encore</td><td>April 22, 2026</td><td>Repeated final demo with seated-load evidence and updated integration results</td><td><span class="badge complete">Complete</span></td></tr>
+            <tr><td>Public Presentation</td><td>April 29, 2026</td><td>Prepare concise final story, integration evidence, and known limitations</td><td><span class="badge in-progress">In Progress</span></td></tr>
+            <tr><td>Website Check 3</td><td>May 4, 2026</td><td>Publish final implementation status, demo videos, dashboard screenshots, and performance matrix</td><td><span class="badge in-progress">In Progress</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -139,6 +142,14 @@
               <td>Full-body wiring and connector management remain the main blocker for multi-leg hardware walking.</td>
               <td>Open; currently being addressed as part of the next integration milestone.</td>
             </tr>
+            <tr>
+              <td>6</td>
+              <td>2026-04-27</td>
+              <td>&mdash;</td>
+              <td>Final integration test</td>
+              <td>All six legs can move under IK control, but the robot does not yet translate reliably; in-place rotation may be possible but is not repeatably verified.</td>
+              <td>Open; next work is gait timing, foot contact, load distribution, and power-path tuning under full-system conditions.</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -168,7 +179,7 @@
   </main>
 
   <footer class="footer">
-    <p>CMU Mechatronics 2026 &mdash; Team 6: Hexapod Dancing Robot</p>
+    <p>CMU Mechatronics 2026 &mdash; Team 6: Peas in a HexaPod</p>
     <p>Thomas Wang &middot; Dillon Ma &middot; Leena Aljurashi &middot; Mithun Roy</p>
   </footer>
 

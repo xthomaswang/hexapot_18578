@@ -41,6 +41,9 @@ DEFAULT_OVERRIDE_FILE = str(ROBOT_ROOT / "web" / "runtime_override.json")
 DEFAULT_XBOX_STATUS_FILE = str(ROBOT_ROOT / "web" / "xbox_status.json")
 DEFAULT_CALIBRATION_FILE = str(MOTION_ENGINE_ROOT / "_cache" / "calibration_profile.json")
 MAX_LOG_LINES = 400
+MAX_UART_LINES = 600
+UART_TX_PREFIX = "[UART-TX]"
+UART_RX_PREFIX = "[UART-RX]"
 OVERRIDE_MODES = ("N", "F", "B", "L", "R", "LL", "RR")
 CALIBRATION_LEG_LABELS = ("L1", "L2", "L3", "R1", "R2", "R3")
 CALIBRATION_JOINT_KEYS = ("coxa_deg", "femur_deg", "tibia_deg")
@@ -913,6 +916,8 @@ class ManagedProcessManager:
         self._command_builder = command_builder
         self._popen_factory = popen_factory
         self._logs: deque[str] = deque(maxlen=max_log_lines)
+        self._uart_tx: deque[tuple[float, str]] = deque(maxlen=MAX_UART_LINES)
+        self._uart_rx: deque[tuple[float, str]] = deque(maxlen=MAX_UART_LINES)
         self._lock = threading.Lock()
         self._proc: subprocess.Popen[str] | None = None
         self._last_command: list[str] = []
@@ -925,8 +930,17 @@ class ManagedProcessManager:
 
     def _append_log_locked(self, line: str) -> None:
         text = line.rstrip("\r\n")
-        if text:
-            self._logs.append(text)
+        if not text:
+            return
+        if text.startswith(UART_TX_PREFIX):
+            payload = text[len(UART_TX_PREFIX):].lstrip()
+            self._uart_tx.append((time.time(), payload))
+            return
+        if text.startswith(UART_RX_PREFIX):
+            payload = text[len(UART_RX_PREFIX):].lstrip()
+            self._uart_rx.append((time.time(), payload))
+            return
+        self._logs.append(text)
 
     def _refresh_locked(self) -> None:
         if self._proc is None:
@@ -974,6 +988,17 @@ class ManagedProcessManager:
                 "started_at": self._started_at,
                 "stopped_at": self._stopped_at,
                 "logs": list(self._logs),
+                "uart_tx": [{"t": ts, "line": line} for ts, line in self._uart_tx],
+                "uart_rx": [{"t": ts, "line": line} for ts, line in self._uart_rx],
+            }
+
+    def uart_snapshot(self) -> dict[str, Any]:
+        """Lightweight snapshot of just the UART TX/RX ring buffers."""
+        with self._lock:
+            return {
+                "running": self._proc is not None,
+                "uart_tx": [{"t": ts, "line": line} for ts, line in self._uart_tx],
+                "uart_rx": [{"t": ts, "line": line} for ts, line in self._uart_rx],
             }
 
     def start(self, config: Any | None = None) -> dict[str, Any]:

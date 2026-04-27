@@ -1,0 +1,6 @@
+
+Robot moving test demo(not able to move with direction, but 6 legs can move)
+https://drive.google.com/file/d/1vAjFn6D3zknHv9pkMcUaOYQrnXKtU4Et/view
+
+Robot moving with human sit test demo
+https://drive.google.com/file/d/1BPvLNKuynJsscaGCUe7A9-_UgIsXdexo/view
