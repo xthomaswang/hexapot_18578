@@ -94,8 +94,8 @@
             </tr>
             <tr>
               <td>Controller-to-servo command path</td>
-              <td>Drive physical motion from the embedded stack and browser UI</td>
-              <td>Runtime, manual control, calibration, and dance pages are hosted on the robot dashboard</td>
+              <td>Drive physical motion from Xbox controller input through Pi-side IK/gait processing to ESP32 servo output</td>
+              <td>Xbox controller commands are handled by the Raspberry Pi, converted into servo-angle commands, and sent to the ESP32; runtime, calibration, and dance pages are hosted on the robot dashboard</td>
               <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
@@ -219,7 +219,7 @@
         </div>
         <div class="status-card">
           <h3>Safety Regression Checks</h3>
-          <p>Verify e-stop and orientation-triggered shutdown behavior on the complete robot, not just in subsystem isolation.</p>
+          <p>Verify emergency-stop behavior and safe command shutdown on the complete robot, not just in subsystem isolation.</p>
         </div>
       </div>
     </section>

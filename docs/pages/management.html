@@ -77,10 +77,10 @@
           <tbody>
             <tr><td>Actuation</td><td>High-torque servo set for six 3-DOF legs, PCA9685 PWM boards, extension cabling</td><td>Largest cost and wiring-complexity driver</td></tr>
             <tr><td>Compute</td><td>Raspberry Pi 5 with active cooling</td><td>Central planning, dashboard, and perception computer</td></tr>
-            <tr><td>Perception</td><td>Pi camera module and IMU</td><td>Sensor package for calibration, vision, and state awareness</td></tr>
-            <tr><td>Embedded Control</td><td>ESP32 control layer and wireless input prototype</td><td>Hardware-side command and PWM control path</td></tr>
+            <tr><td>Perception</td><td>Pi camera module and AprilTag target workflow</td><td>Sensor package for calibration and vision work</td></tr>
+            <tr><td>Embedded Control</td><td>Xbox controller input path through Raspberry Pi, ESP32 control layer, and PWM drivers</td><td>Manual input is handled on the Pi; the ESP32 receives servo-angle commands for hardware-side PWM output</td></tr>
             <tr><td>Mechanical</td><td>Rectangular chassis, servo brackets, leg links, bearings, and fasteners</td><td>Major fabrication and assembly workstream</td></tr>
-            <tr><td>Power</td><td>Battery, regulators, distribution wiring, and connectors</td><td>High-current integration and reliability risk</td></tr>
+            <tr><td>Power</td><td>Three OVONIC 2S LiPo 50C 6200mAh 7.4V packs, three power-distribution boards, regulators, wiring, and connectors</td><td>Final layout powers two legs from each battery after the original two-pack NiMH setup could not support all six legs</td></tr>
           </tbody>
         </table>
       </div>
@@ -136,19 +136,19 @@
             </tr>
             <tr>
               <td>5</td>
-              <td>2026-03-25</td>
-              <td>&mdash;</td>
-              <td>System integration planning</td>
-              <td>Full-body wiring and connector management remain the main blocker for multi-leg hardware walking.</td>
-              <td>Open; recorded as a remaining integration risk after the final demo period.</td>
+              <td>2026-04-14</td>
+              <td>2026-04-21</td>
+              <td>Full-system power test</td>
+              <td>The original power system used two Zeee 8.4V 3000mAh NiMH RC battery packs and could not reliably power all six legs at once before the April 15 final demo.</td>
+              <td>Replaced the supply with three OVONIC 2S LiPo 50C 6200mAh 7.4V packs and three power-distribution boards. Each battery now powers two legs, which enabled all six legs to work before the April 22 final demo encore.</td>
             </tr>
             <tr>
               <td>6</td>
-              <td>2026-04-27</td>
+              <td>2026-04-22</td>
               <td>&mdash;</td>
-              <td>Final integration test</td>
-              <td>All six legs can move under IK control, but the robot does not yet translate reliably; in-place rotation may be possible but is not repeatably verified.</td>
-              <td>Open; next work is gait timing, foot contact, load distribution, and power-path tuning under full-system conditions.</td>
+              <td>Final demo encore</td>
+              <td>With the revised power system, all six legs can actuate under IK control, but stable body translation was still not repeatably demonstrated; in-place rotation remained limited / unverified.</td>
+              <td>Open; remaining work is gait timing, foot contact, load distribution, traction, and mechanical tuning under full-system conditions.</td>
             </tr>
           </tbody>
         </table>

@@ -132,7 +132,12 @@
 
       <div class="card">
         <h3>Inverse Kinematics &amp; Gait Control</h3>
-        <p>The Python control stack computes coxa, femur, and tibia angles from body-relative foot targets, then maps those targets to hardware-ready servo commands. The same motion logic feeds simulation, hardware control, calibration, and dashboard workflows.</p>
+        <p>The Python control stack computes coxa, femur, and tibia angles from body-relative foot targets, then maps those targets to hardware-ready servo commands. The same motion logic feeds simulation, Xbox controller driving, hardware control, calibration, and dashboard workflows.</p>
+      </div>
+
+      <div class="card">
+        <h3>Xbox Controller Control Path</h3>
+        <p>The final manual-drive path uses an Xbox controller for operator input. The controller sends high-level commands directly to the Raspberry Pi; the Pi interprets those inputs, runs gait and IK logic, computes the concrete servo angles, and forwards those angle commands to the ESP32 for PWM output.</p>
       </div>
 
       <div class="split-grid">
@@ -146,7 +151,7 @@
         </div>
         <div class="card">
           <h3>Controller-Oriented Motion Demo</h3>
-          <p>A full-body controller demo validates the command path from high-level drive inputs to synchronized multi-leg gait output.</p>
+          <p>A full-body controller demo validates the command path from high-level drive inputs to synchronized multi-leg gait output and servo-angle generation.</p>
           <div class="figure">
             <img src="../assets/images/progress/controller-demo.png" alt="Controller demo for the full hexapod">
             <figcaption>Figure 8: Full-hexapod controller demo built on the shared gait and IK stack.</figcaption>
@@ -188,7 +193,7 @@
 
     <section class="section">
       <h2>Operator Dashboard</h2>
-      <p>The Raspberry Pi now hosts a user-friendly browser dashboard at the robot control endpoint. The interface wraps the runtime, manual driving, servo calibration, camera console, automated mode, and dance recording tools so the robot can be operated without command-line access during demos.</p>
+      <p>The Raspberry Pi hosts a user-friendly browser dashboard at the robot control endpoint. Manual driving uses the Xbox controller path, while the dashboard wraps runtime deployment, servo calibration, camera console, automated mode, and dance recording tools so the robot can be operated without command-line access during demos.</p>
       <div class="figure-row">
         <div class="figure web-ui">
           <img src="../assets/images/web-ui/dashboard.png" alt="Robot dashboard overview page">
@@ -196,7 +201,7 @@
         </div>
         <div class="figure web-ui">
           <img src="../assets/images/web-ui/manual.png" alt="Manual robot control page">
-          <figcaption>Figure 13: Manual control page for deploying runtime and commanding robot motion from the browser.</figcaption>
+          <figcaption>Figure 13: Manual control page for runtime deployment and operator-control status.</figcaption>
         </div>
       </div>
       <div class="figure-row">
@@ -221,8 +226,8 @@
           <tbody>
             <tr><td>Mechanical assembly</td><td>Six-leg frame, servo brackets, links, and final physical robot assembly</td><td>Final robot photo, single-leg prototype, bracket revision images</td></tr>
             <tr><td>Electrical / power</td><td>Servo power distribution, PWM breakout wiring, battery wiring, and controller bench</td><td>Power bench photo and ESP32 breadboard photo</td></tr>
-            <tr><td>Embedded control</td><td>ESP32 and PWM command path connected to the higher-level runtime</td><td>Bench hardware setup and dashboard-driven control flow</td></tr>
-            <tr><td>IK / gait software</td><td>Python inverse kinematics, gait generation, servo mapping, and command APIs</td><td>IK demo, controller demo, and shared software architecture diagram</td></tr>
+            <tr><td>Embedded control</td><td>ESP32 and PWM command path receiving servo-angle commands from the Raspberry Pi</td><td>Bench hardware setup and Pi-to-ESP32 control flow</td></tr>
+            <tr><td>IK / gait software</td><td>Python inverse kinematics, gait generation, Xbox controller interpretation, servo mapping, and command APIs</td><td>IK demo, controller demo, and shared software architecture diagram</td></tr>
             <tr><td>Dashboard</td><td>Runtime, manual, calibration, auto, camera, and dance workflow pages</td><td>Dashboard, manual, calibration, and dance screenshots</td></tr>
             <tr><td>Vision</td><td>Raspberry Pi camera bring-up and AprilTag detection pipeline</td><td>Pi camera hardware and AprilTag detection screenshot</td></tr>
             <tr><td>Simulation</td><td>MuJoCo model for six-leg gait, contact, joint limits, and actuator commands</td><td>Standing pose, gait phase, top-down, and animation media</td></tr>

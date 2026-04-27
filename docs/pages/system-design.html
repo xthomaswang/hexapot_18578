@@ -70,9 +70,8 @@
           <thead><tr><th>ID</th><th>Requirement</th><th>Specification</th></tr></thead>
           <tbody>
             <tr><td>SF-1</td><td>Emergency stop</td><td>Accessible hardware stop for quick shutdown</td></tr>
-            <tr><td>SF-2</td><td>Orientation awareness</td><td>IMU-based state monitoring for unsafe pitch / roll conditions</td></tr>
-            <tr><td>SF-3</td><td>Operator control</td><td>Wireless manual control path to the embedded controller</td></tr>
-            <tr><td>SF-4</td><td>Gradual integration</td><td>Subsystems must be bench-testable before full assembly</td></tr>
+            <tr><td>SF-2</td><td>Operator control</td><td>Xbox controller input to the Raspberry Pi, followed by Pi-generated servo-angle commands to the ESP32</td></tr>
+            <tr><td>SF-3</td><td>Gradual integration</td><td>Subsystems must be bench-testable before full assembly</td></tr>
           </tbody>
         </table>
       </div>
@@ -89,16 +88,16 @@
 
       <div class="split-grid">
         <div class="card">
-          <h3>Perception &amp; State Estimation</h3>
-          <p>Camera-based AprilTag detection and IMU feedback provide the robot with the information needed for calibration, pose monitoring, and future autonomous behavior.</p>
+          <h3>Perception &amp; Calibration</h3>
+          <p>Camera-based AprilTag detection provides the robot with the information needed for calibration, tagged-target sensing, and future autonomous behavior.</p>
         </div>
         <div class="card">
           <h3>Motion Planning</h3>
-          <p>The Raspberry Pi computes body-relative foot trajectories, inverse kinematics, and gait timing for stand, walk, turn, and future dance routines.</p>
+          <p>The Raspberry Pi receives Xbox controller inputs, computes body-relative foot trajectories, inverse kinematics, and gait timing, then produces servo-angle commands for stand, walk, turn, and future dance routines.</p>
         </div>
         <div class="card">
           <h3>Embedded Control</h3>
-          <p>The ESP32 manages real-time command handling, PWM updates, and safety logic so the timing-sensitive layer remains decoupled from higher-level planning.</p>
+          <p>The ESP32 receives concrete servo-angle commands from the Pi and manages timing-sensitive PWM output and safety logic.</p>
         </div>
         <div class="card">
           <h3>Mechanical Structure</h3>
@@ -120,11 +119,11 @@
         <table>
           <thead><tr><th>Domain</th><th>Selected Components</th><th>Role</th></tr></thead>
           <tbody>
-            <tr><td><strong>Perception</strong></td><td>Raspberry Pi 5 camera module, IMU, emergency stop</td><td>AprilTag detection, state awareness, and safety monitoring inputs</td></tr>
-            <tr><td><strong>High-Level Compute</strong></td><td>Raspberry Pi 5</td><td>Inverse kinematics, gait generation, simulation alignment, calibration, and future navigation logic</td></tr>
-            <tr><td><strong>Embedded Control</strong></td><td>ESP32 + PCA9685 PWM driver boards</td><td>Receives commands, maintains timing-sensitive servo output, and interfaces with the operator control path</td></tr>
+            <tr><td><strong>Perception &amp; Safety Inputs</strong></td><td>Raspberry Pi 5 camera module, AprilTag targets, emergency stop</td><td>AprilTag detection, calibration target sensing, and operator safety stop input</td></tr>
+            <tr><td><strong>High-Level Compute</strong></td><td>Raspberry Pi 5</td><td>Xbox controller input handling, inverse kinematics, gait generation, servo-angle generation, simulation alignment, calibration, and future navigation logic</td></tr>
+            <tr><td><strong>Embedded Control</strong></td><td>ESP32 + PCA9685 PWM driver boards</td><td>Receives Pi-generated servo-angle commands and maintains timing-sensitive servo output</td></tr>
             <tr><td><strong>Actuation</strong></td><td>18 high-torque servos across six legs</td><td>Drives coxa, femur, and tibia joints for stance, swing, and turning maneuvers</td></tr>
-            <tr><td><strong>Operator Interface</strong></td><td>Hosted browser dashboard, wireless handheld controller / XR-style prototype input</td><td>Manual drive, calibration, camera, runtime deployment, and dance workflow commands during testing and demos</td></tr>
+            <tr><td><strong>Operator Interface</strong></td><td>Xbox controller and hosted browser dashboard</td><td>Manual drive through the Xbox controller; runtime, calibration, camera, and dance workflows through the dashboard</td></tr>
             <tr><td><strong>Power</strong></td><td>Battery packs, regulators, power distribution, wiring harnesses</td><td>Separates high-current servo loads from logic power where possible</td></tr>
           </tbody>
         </table>
@@ -147,7 +146,12 @@
 
       <div class="card">
         <h3>Compute Partition</h3>
-        <p>The Raspberry Pi and ESP32 are intentionally split by responsibility. The Pi owns algorithmic tasks such as gait generation, AprilTag processing, and calibration logic. The ESP32 owns fast, deterministic tasks such as command reception, PWM output, and hardware-side safety response.</p>
+        <p>The Raspberry Pi and ESP32 are intentionally split by responsibility. The Pi owns algorithmic tasks such as Xbox controller interpretation, gait generation, AprilTag processing, calibration logic, and servo-angle generation. The ESP32 owns fast, deterministic tasks such as command reception, PWM output, and hardware-side safety response.</p>
+      </div>
+
+      <div class="card">
+        <h3>Operator Input Choice</h3>
+        <p>The team moved to an Xbox controller because it was simpler to integrate, more ergonomic for manual driving, and visually cleaner for demos than the earlier prototype input path. The controller sends high-level driver intent to the Raspberry Pi; the Pi converts that intent into explicit servo angles before sending commands to the ESP32.</p>
       </div>
 
       <div class="card">

@@ -90,8 +90,9 @@
       </p>
       <p>
         The final architecture uses <strong>18 high-torque servo channels</strong> across six 3-DOF legs,
-        an <strong>ESP32</strong> for low-level control, and a <strong>Raspberry Pi 5</strong> for
-        inverse kinematics, calibration, vision, and operator-facing tools.
+        an <strong>Xbox controller</strong> for manual input, a <strong>Raspberry Pi 5</strong> for
+        inverse kinematics, calibration, vision, and servo-angle generation, and an <strong>ESP32</strong>
+        for low-level PWM control.
       </p>
 
       <div class="figure medium">
@@ -111,7 +112,7 @@
         <div class="status-card">
           <span class="badge complete">Complete</span>
           <h3>Operator Workflow</h3>
-          <p>The browser dashboard supports runtime control, manual motion, calibration, camera inspection, auto mode, and dance sequence work.</p>
+          <p>The Xbox controller provides the manual drive input, while the browser dashboard supports runtime control, calibration, camera inspection, auto mode, and dance sequence work.</p>
         </div>
         <div class="status-card">
           <span class="badge in-progress">In Progress</span>
