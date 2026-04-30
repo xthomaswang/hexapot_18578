@@ -61,7 +61,7 @@
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Full Translation</div>
-          <div class="kpi-value">Pending</div>
+          <div class="kpi-value">Partial</div>
         </div>
       </div>
     </section>
@@ -107,38 +107,32 @@
             <tr>
               <td>Forward / backward walking on full robot</td>
               <td>Repeatable physical walking demonstration</td>
-              <td>Not yet demonstrated; legs move but the body does not translate reliably</td>
-              <td><span class="badge pending">Pending</span></td>
+              <td>Partial physical walking demonstrated; repeatability and directional consistency remain limited</td>
+              <td><span class="badge partial">Partial</span></td>
             </tr>
             <tr>
               <td>Turn in place on full robot</td>
               <td>Physical turning demo</td>
-              <td>Possible in limited tests, but not yet verified as a repeatable capability</td>
-              <td><span class="badge in-progress">In Progress</span></td>
+              <td>Physical turning demo passed on the integrated robot</td>
+              <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
               <td>Payload support</td>
               <td>170 lb rider / payload target</td>
-              <td>Human seated demo clip captured; dynamic walking under rider load is not verified</td>
-              <td><span class="badge in-progress">In Progress</span></td>
+              <td>Static payload support demo passed with the final robot assembly</td>
+              <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
               <td>Ride height</td>
               <td>2&ndash;3 ft above ground</td>
-              <td>Final assembly not yet measured</td>
-              <td><span class="badge pending">Pending</span></td>
+              <td>Final assembly ride height verified within the target range</td>
+              <td><span class="badge complete">Complete</span></td>
             </tr>
             <tr>
               <td>Battery endurance</td>
               <td>&ge; 30 minutes continuous operation</td>
               <td>Endurance test not yet run on the integrated system</td>
               <td><span class="badge pending">Pending</span></td>
-            </tr>
-            <tr>
-              <td>Safety interlock behavior</td>
-              <td>Detect unsafe state and stop motion</td>
-              <td>Safety architecture defined; integrated full-system shutdown validation still pending</td>
-              <td><span class="badge in-progress">In Progress</span></td>
             </tr>
           </tbody>
         </table>
@@ -191,13 +185,8 @@
       <div class="split-grid">
         <div class="card">
           <h3>Six-Leg Powered Motion</h3>
-          <p>This demo shows the integrated robot with all six legs powered and moving from the current IK/control stack. The robot is not yet able to translate forward or backward reliably.</p>
-          <p><a href="https://drive.google.com/file/d/1vAjFn6D3zknHv9pkMcUaOYQrnXKtU4Et/view">Open six-leg motion demo</a></p>
-        </div>
-        <div class="card">
-          <h3>Human Seated Test</h3>
-          <p>This demo records the robot under a seated human load. It supports payload integration evidence, but it is not a completed walking performance test.</p>
-          <p><a href="https://drive.google.com/file/d/1BPvLNKuynJsscaGCUe7A9-_UgIsXdexo/view">Open seated test demo</a></p>
+          <p>This demo shows the integrated robot with all six legs powered and moving from the current IK/control stack. Forward/backward motion is partially demonstrated, but repeatable directional translation remains limited.</p>
+          <p><a href="https://youtu.be/IMZV8NJQmC4?si=ju7pJszeyigVpjTw">Open six-leg motion demo</a></p>
         </div>
       </div>
     </section>
@@ -210,16 +199,8 @@
           <p>Translate the working gait stack from simulation and single-leg tests onto the integrated chassis.</p>
         </div>
         <div class="status-card">
-          <h3>Load &amp; Height Measurement</h3>
-          <p>Measure real ride height and perform static / dynamic payload checks on the final frame.</p>
-        </div>
-        <div class="status-card">
           <h3>Power-Endurance Testing</h3>
           <p>Run timed trials once the final battery and wiring architecture are stable.</p>
-        </div>
-        <div class="status-card">
-          <h3>Safety Regression Checks</h3>
-          <p>Verify emergency-stop behavior and safe command shutdown on the complete robot, not just in subsystem isolation.</p>
         </div>
       </div>
     </section>

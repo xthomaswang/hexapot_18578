@@ -900,6 +900,10 @@ details.ilr-group td .badge {
   background: #0d6efd;
 }
 
+.badge.partial {
+  background: #6f42c1;
+}
+
 .badge.missing {
   background: var(--gray-500);
 }
