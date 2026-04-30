@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightboxImg = document.getElementById('lightbox-img');
 
   if (lightbox) {
-    document.querySelectorAll('.figure img, .gallery-grid img').forEach(img => {
+    document.querySelectorAll('.figure img, .gallery-grid img, .team-member .photo img').forEach(img => {
       img.addEventListener('click', () => {
         lightboxImg.src = img.src;
         lightboxImg.alt = img.alt;
