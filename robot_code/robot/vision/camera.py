@@ -32,28 +32,28 @@ class PiCameraStream:
         self._started = False
 
     def start(self):
-        if self._started:
-            return
+        with self._lock:
+            if self._started:
+                return
 
-        config = self.picam2.create_video_configuration(
-            main={"size": (self.width, self.height)},
-            controls={"FrameDurationLimits": (self.frame_duration_us, self.frame_duration_us)},
-        )
-        self.picam2.configure(config)
+            config = self.picam2.create_video_configuration(
+                main={"size": (self.width, self.height)},
+                controls={"FrameDurationLimits": (self.frame_duration_us, self.frame_duration_us)},
+            )
+            self.picam2.configure(config)
 
-        try:
-            self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
-        except Exception:
-            pass
+            try:
+                self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+            except Exception:
+                pass
 
-        self.picam2.start_recording(JpegEncoder(), FileOutput(self.output))
-        self._started = True
+            self.picam2.start_recording(JpegEncoder(), FileOutput(self.output))
+            self._started = True
 
     def stop(self):
-        if not self._started:
-            return
-
         with self._lock:
+            if not self._started:
+                return
             try:
                 self.picam2.stop_recording()
             finally:

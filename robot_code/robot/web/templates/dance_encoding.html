@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <button class="button secondary" id="encoder-start">Start Encoding</button>
+  <button class="button ghost" id="encoder-save-state" style="display:none;">Save State</button>
+  <button class="button ghost" id="encoder-save-dance" style="display:none;">Save Dance</button>
+  <button class="button ghost" id="encoder-abort" style="display:none;">Discard Session</button>
+  <a class="button ghost" href="{{ url_for('auto') }}">Back to Auto</a>
+{% endblock %}
+
+{% block content %}
+  <section class="grid split-main">
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-label">Dance Encoding</span>
+          <h2>Author a Dance State-by-State</h2>
+          <p class="panel-copy">
+            Pick one leg at a time, drag the coxa / femur / tibia draft offsets, and preview on the robot.
+            Switch legs to edit more within the same state. <strong>Save State</strong> freezes all edits in
+            this state; all edited legs play back in parallel. <strong>Save Dance</strong> writes the preset.
+          </p>
+        </div>
+        <div class="status-chip idle" id="encoder-chip">Session idle</div>
+      </div>
+
+      <div class="panel-head" style="margin-top: 1rem;">
+        <div>
+          <span class="panel-label">Xbox Controller</span>
+          <h2>Gamepad Status</h2>
+        </div>
+        <div class="status-chip idle" id="xbox-chip">Disconnected</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Device</strong>
+          <span id="xbox-device-name">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Connection</strong>
+          <span id="xbox-connection-type">--</span>
+        </div>
+        <div class="info-card">
+          <strong>Battery</strong>
+          <span id="xbox-battery">--</span>
+        </div>
+      </div>
+
+      <div class="info-grid encoder-info-grid">
+        <div class="info-card">
+          <strong>Dance Name</strong>
+          <input id="encoder-name" type="text" placeholder="e.g. spider-wave">
+        </div>
+        <div class="info-card">
+          <strong>Default Segment (ms)</strong>
+          <input id="encoder-default-segment" type="number" min="60" max="10000" step="10" value="440">
+        </div>
+        <div class="info-card">
+          <strong>Current State Duration (ms)</strong>
+          <input id="encoder-state-duration" type="number" min="60" max="10000" step="10" value="440">
+        </div>
+        <div class="info-card">
+          <strong>State Index</strong>
+          <span id="encoder-state-index">--</span>
+          <p id="encoder-saved-count">0 saved</p>
+        </div>
+      </div>
+
+      <div class="calibration-layout">
+        <div class="calibration-leg-grid">
+          {% for label, idx in [("L1", 0), ("L2", 1), ("L3", 2), ("R1", 3), ("R2", 4), ("R3", 5)] %}
+            <button class="calibration-leg-card" type="button" data-encoder-leg="{{ idx }}">
+              <span class="calibration-leg-label">{{ label }}</span>
+              <span class="calibration-leg-state" id="encoder-leg-state-{{ idx }}">Untouched</span>
+            </button>
+          {% endfor %}
+        </div>
+
+        <div class="calibration-editor">
+          <div class="panel-head calibration-editor-head">
+            <div>
+              <span class="panel-label">Editing</span>
+              <h2 id="encoder-editor-title">Pick a leg</h2>
+              <p class="panel-copy" id="encoder-leg-detail">Start a session, then select one of the six legs to edit its draft offsets.</p>
+            </div>
+          </div>
+
+          <div class="field-grid calibration-field-grid">
+            <div class="field">
+              <label for="encoder-coxa">Coxa Offset (deg) <span id="encoder-coxa-value">0.0</span></label>
+              <input id="encoder-coxa" type="range" min="-180" max="180" step="0.1" value="0">
+            </div>
+            <div class="field">
+              <label for="encoder-femur">Femur Offset (deg) <span id="encoder-femur-value">0.0</span></label>
+              <input id="encoder-femur" type="range" min="-180" max="180" step="0.1" value="0">
+            </div>
+            <div class="field">
+              <label for="encoder-tibia">Tibia Offset (deg) <span id="encoder-tibia-value">0.0</span></label>
+              <input id="encoder-tibia" type="range" min="-180" max="180" step="0.1" value="0">
+            </div>
+            <div class="field full">
+              <label>Apply Mode</label>
+              <div class="checkbox-row">
+                <input id="encoder-auto-apply" type="checkbox">
+                <span>Auto preview while draft offsets move (sends to the robot on every slider tick).</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="calibration-joint-toolbar">
+            <div class="calibration-joint-selector" role="group" aria-label="Dance encoder joint selection">
+              <button class="calibration-joint-button active" type="button" data-encoder-joint="coxa_deg">Y · Coxa</button>
+              <button class="calibration-joint-button" type="button" data-encoder-joint="femur_deg">X · Femur</button>
+              <button class="calibration-joint-button" type="button" data-encoder-joint="tibia_deg">A · Tibia</button>
+            </div>
+            <p class="panel-copy calibration-xbox-copy">
+              Xbox: <code>Y / X / A</code> select servo, <code>LB / RB</code> switch leg,
+              right stick <code>Y</code> nudges the selected draft offset, <code>B</code> saves the current state.
+            </p>
+          </div>
+
+          <div class="info-card calibration-preview-card">
+            <strong>Saved Neutral (state {{ '{' }}current{{ '}' }} from)</strong>
+            <span id="encoder-leg-from">--</span>
+            <strong style="margin-top:0.5rem;">Applied Target (state to)</strong>
+            <code id="encoder-leg-to">--</code>
+          </div>
+
+          <div class="button-row" style="margin-top: 1rem;">
+            <button class="button secondary" id="encoder-send">Preview Offset</button>
+            <button class="button secondary" id="encoder-save-leg-offset">Commit This Leg</button>
+            <button class="button ghost" id="encoder-zero-draft">Zero Draft</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="stack">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Saved States</span>
+            <h2>State History</h2>
+          </div>
+        </div>
+        <pre id="encoder-state-list">No session active.</pre>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="panel-label">Save Options</span>
+            <h2>Bind to AprilTag</h2>
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field full">
+            <label for="encoder-save-tag">Tag ID (optional)</label>
+            <input id="encoder-save-tag" type="number" min="2" step="1" placeholder="e.g. 4">
+            <p class="panel-copy">Tag 1 is reserved for Stop. Each other tag id is globally unique.</p>
+          </div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

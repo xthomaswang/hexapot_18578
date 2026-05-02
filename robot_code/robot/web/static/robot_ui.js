@@ -589,6 +589,7 @@
       "calibration-send",
       "calibration-save",
       "calibration-neutral",
+      "dance-stop",
     ].forEach(function (id) {
       const node = el(id);
       if (node) {
@@ -614,6 +615,12 @@
     syncActionButtons();
     try {
       await handler();
+    } catch (error) {
+      const message = error && error.message ? error.message : "Action failed";
+      showToast(message, "warning");
+      if (typeof console !== "undefined" && console.error) {
+        console.error(error);
+      }
     } finally {
       actionInFlight = false;
       releaseActionLock();
@@ -730,10 +737,22 @@
     };
   }
 
+  function normalizeCameraHostInput(value) {
+    const raw = String(value == null ? "" : value).trim();
+    const lowered = raw.toLowerCase();
+    if (!raw || ["auto", "current", "dashboard", "*", "localhost"].includes(lowered)) {
+      return "0.0.0.0";
+    }
+    if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(raw)) {
+      return "0.0.0.0";
+    }
+    return raw;
+  }
+
   function cameraPayload(modeOverride) {
     return {
       mode: modeOverride || defaults.camera.mode,
-      host: el("camera-host") ? el("camera-host").value : defaults.camera.host,
+      host: normalizeCameraHostInput(el("camera-host") ? el("camera-host").value : defaults.camera.host),
       port: el("camera-port") ? Number(el("camera-port").value) : defaults.camera.port,
       detector: el("camera-detector") ? el("camera-detector").value : defaults.camera.detector,
     };
@@ -816,7 +835,7 @@
       lastXboxButtonSeq = normalizeXboxButtonSeq(data.xbox.button_seq);
     }
     if (data.camera && data.camera.config) {
-      setValue("camera-host", data.camera.config.host);
+      setValue("camera-host", normalizeCameraHostInput(data.camera.config.host));
       setValue("camera-port", data.camera.config.port);
       setValue("camera-detector", data.camera.config.detector);
     }
@@ -921,16 +940,17 @@
     const frame = el("camera-frame");
     const stream = el("camera-stream");
     const empty = el("camera-empty");
-    if (!frame || !frame.dataset.src) {
-      return;
+    if (frame) {
+      frame.src = "about:blank";
+      frame.dataset.loaded = "";
+      frame.classList.add("hidden");
     }
-    frame.dataset.loaded = "true";
-    frame.classList.remove("hidden");
     if (stream) {
       stream.classList.add("hidden");
     }
     if (empty) {
-      empty.classList.add("hidden");
+      empty.textContent = "Camera stream is not available yet. Open the MJPEG stream link in a new tab to inspect the service.";
+      empty.classList.remove("hidden");
     }
     clearCameraFallbackTimer();
   }
@@ -999,7 +1019,7 @@
         frame.dataset.src = pageUrl;
         frame.dataset.loaded = "";
         frame.classList.add("hidden");
-        frame.src = pageUrl || "about:blank";
+        frame.src = "about:blank";
       }
     }
     if (empty && !embedLoaded) {
@@ -1027,6 +1047,8 @@
     var rtRunning = data.runtime.running;
     var camRunning = data.camera.running;
     var recActive = data.dance && data.dance.recording && data.dance.recording.active;
+    var calibrationActive = Boolean(data.calibration && data.calibration.active);
+    var encoderActive = Boolean(data.dance && data.dance.encoder && data.dance.encoder.active);
     var anyRunning = rtRunning || camRunning;
 
     // Dashboard: deploy vs stop-all
@@ -1042,9 +1064,33 @@
     toggleButtonVisibility("camera-start-raw", !camRunning);
     toggleButtonVisibility("camera-stop", camRunning);
 
+    // Calibration page: start vs stop
+    toggleButtonVisibility("calibration-start", !calibrationActive);
+    toggleButtonVisibility("calibration-stop", calibrationActive);
+
     // Dance page: start vs stop recording
     toggleButtonVisibility("recording-start-manual", !recActive);
     toggleButtonVisibility("recording-stop", Boolean(recActive));
+
+    // Dance encoder page: session actions only show after Start Encoding.
+    toggleButtonVisibility("encoder-start", !encoderActive);
+    toggleButtonVisibility("encoder-save-state", encoderActive);
+    toggleButtonVisibility("encoder-save-dance", encoderActive);
+    toggleButtonVisibility("encoder-abort", encoderActive);
+
+    // Auto page: preset cards only usable when runtime is off, the camera is
+    // available, and the automated worker has already been prepared. Xbox is
+    // orthogonal (it only writes the override JSON file, no serial access).
+    // Keep Stop Dance enabled only while a preset is active.
+    var dance = data.dance || {};
+    var presetsAllowed = !rtRunning && camRunning && Boolean(dance.ready);
+    document.querySelectorAll("[data-dance-preset]").forEach(function (node) {
+      node.disabled = !presetsAllowed || actionInFlight;
+    });
+    var stopNode = el("dance-stop");
+    if (stopNode) {
+      stopNode.disabled = actionInFlight || !Boolean(dance.active);
+    }
   }
 
   function applyStatus(data) {
@@ -1060,6 +1106,7 @@
     updateAutomated(data);
     updateCreateDance(data);
     updateCameraPage(data);
+    updateDanceEncoder(data);
     syncStartStopButtons(data);
   }
 
@@ -1274,18 +1321,715 @@
       return;
     }
     setStatusChip("automated-camera-chip", data.camera.running, "Camera live", "Camera stopped", "Camera idle");
-    setText("dance-state", data.dance.implemented ? "Live" : "Placeholder");
-    setText(
-      "dance-detail",
-      data.dance.last_request
-        ? "Last preset " + data.dance.last_request.preset + " requested at " + new Date(data.dance.last_request.requested_at * 1000).toLocaleTimeString()
-        : "Preset buttons are ready; choreography runtime is not attached yet."
-    );
+    const dance = data.dance || {};
+    const active = Boolean(dance.active);
+    let stateLabel = "Idle";
+    if (active && dance.preset_id) {
+      stateLabel = "Running: " + dance.preset_id;
+    } else if (!dance.implemented) {
+      stateLabel = "Placeholder";
+    }
+    setText("dance-state", stateLabel);
+    let detail;
+    if (active && dance.preset_id) {
+      const source = dance.source === "apriltag" ? "AprilTag" : "manual button";
+      detail = "Preset " + dance.preset_id + " running via " + source + ".";
+    } else if (dance.last_request) {
+      detail = "Last preset " + dance.last_request.preset + " requested at " + new Date(dance.last_request.requested_at * 1000).toLocaleTimeString() + ".";
+    } else {
+      detail = "Deploy automated mode, then pick a preset or show an AprilTag.";
+    }
+    setText("dance-detail", detail);
     setText(
       "dance-last-request",
-      data.dance.last_request ? data.dance.last_request.preset : "No preset requested yet."
+      dance.last_request ? dance.last_request.preset + " (" + (dance.last_request.source || "manual_button") + ")" : "No preset requested yet."
     );
+    setText("dance-last-tag", "Last tag: " + (dance.last_tag_id != null ? dance.last_tag_id : "--"));
+    setText("dance-last-stop", "Last stop reason: " + (dance.last_stop_reason || "--"));
+    const errorNode = el("dance-error");
+    if (errorNode) {
+      if (dance.error) {
+        errorNode.textContent = "Worker error: " + dance.error;
+        errorNode.classList.remove("hidden");
+      } else {
+        errorNode.textContent = "";
+        errorNode.classList.add("hidden");
+      }
+    }
+    renderPresetGrid(data);
     setPre("camera-log", data.camera.logs, "No camera logs yet.");
+  }
+
+  let lastPresetGridSignature = null;
+
+  function renderPresetGrid(data) {
+    const grid = el("dance-preset-grid");
+    const emptyHint = el("dance-preset-empty");
+    if (!grid) {
+      return;
+    }
+    const dance = data.dance || {};
+    const presets = Array.isArray(dance.presets) ? dance.presets : [];
+    const rtRunning = Boolean(data.runtime && data.runtime.running);
+    const camRunning = Boolean(data.camera && data.camera.running);
+    const ready = Boolean(dance.ready);
+    const presetsAllowed = !rtRunning && camRunning && ready && !actionInFlight;
+    const activePresetId = dance.active ? dance.preset_id || null : null;
+
+    // Skip re-render when nothing the grid renders has actually changed.
+    // The status poll fires every 500ms and renderPresetGrid wipes the grid's
+    // innerHTML — without this guard, any tag-id the user is typing into a
+    // rebind input gets cleared on every tick.
+    const signature = JSON.stringify({
+      presetsAllowed,
+      activePresetId,
+      presets: presets.map((p) => [p.preset_id, p.name, p.tag_id]),
+    });
+    if (signature === lastPresetGridSignature) {
+      return;
+    }
+    lastPresetGridSignature = signature;
+
+    if (!presets.length) {
+      grid.innerHTML = "";
+      if (emptyHint) {
+        emptyHint.classList.remove("hidden");
+      }
+      return;
+    }
+    if (emptyHint) {
+      emptyHint.classList.add("hidden");
+    }
+    const parts = [];
+    for (const preset of presets) {
+      const presetId = preset.preset_id || "";
+      const tagLabel = preset.tag_id == null ? "unbound" : "Tag " + preset.tag_id;
+      const isActive = activePresetId === presetId;
+      const disabledAttr = presetsAllowed ? "" : "disabled";
+      parts.push(
+        '<div class="preset-card-wrapper">' +
+          '<button class="preset-card" data-dance-preset="' + escapeHTML(presetId) + '" ' + disabledAttr + '>' +
+            '<strong>' + escapeHTML(preset.name || presetId) + '</strong>' +
+            '<span>' + escapeHTML(tagLabel) + (isActive ? " · running" : "") + '</span>' +
+          '</button>' +
+          '<div class="preset-card-controls">' +
+            '<input type="number" min="2" step="1" placeholder="Tag ID" ' +
+              'data-dance-rebind-input="' + escapeHTML(presetId) + '" ' +
+              'value="' + (preset.tag_id == null ? "" : escapeHTML(String(preset.tag_id))) + '">' +
+            '<button class="button ghost" data-dance-rebind="' + escapeHTML(presetId) + '">Bind</button>' +
+            '<button class="button ghost" data-dance-delete="' + escapeHTML(presetId) + '">Delete</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+    grid.innerHTML = parts.join("");
+  }
+
+  const ENCODER_LEG_LABELS = ["L1", "L2", "L3", "R1", "R2", "R3"];
+  const ENCODER_JOINT_KEYS = ["coxa_deg", "femur_deg", "tibia_deg"];
+  const ENCODER_JOINT_LABELS = { coxa_deg: "Coxa", femur_deg: "Femur", tibia_deg: "Tibia" };
+  const ENCODER_XBOX_JOINT_FOR_BTN = { y: "coxa_deg", x: "femur_deg", a: "tibia_deg" };
+  const XBOX_ENCODER_DEADZONE = 60;
+  const XBOX_ENCODER_MAX_STEP_DEG = 1.6;
+  const XBOX_ENCODER_NUDGE_MS = 100;
+
+  let encoderSelectedLeg = null;          // 0..5 or null
+  let encoderSelectedJoint = "coxa_deg";
+  // encoderDraft[leg] = {coxa_deg, femur_deg, tibia_deg}  (offsets relative to from)
+  const encoderDraft = Array.from({ length: 6 }, () => ({
+    coxa_deg: 0.0, femur_deg: 0.0, tibia_deg: 0.0,
+  }));
+  let encoderDraftStateIndex = null;       // resets the draft buffer when encoder advances states
+  let encoderLastXboxButtonSeq = null;     // for edge detection
+  let encoderLastStickStep = 0;            // monotonic timestamp of the last stick nudge
+  let encoderAutoSendTimer = null;
+
+  function encoderResetDrafts() {
+    for (let i = 0; i < 6; i++) {
+      encoderDraft[i].coxa_deg = 0;
+      encoderDraft[i].femur_deg = 0;
+      encoderDraft[i].tibia_deg = 0;
+    }
+  }
+
+  function encoderSliderValue(joint) {
+    const map = { coxa_deg: "encoder-coxa", femur_deg: "encoder-femur", tibia_deg: "encoder-tibia" };
+    const node = el(map[joint]);
+    if (!node) return 0;
+    const v = parseFloat(node.value);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  function encoderSetSliderValue(joint, value) {
+    const map = { coxa_deg: "encoder-coxa", femur_deg: "encoder-femur", tibia_deg: "encoder-tibia" };
+    const node = el(map[joint]);
+    if (node) {
+      node.value = String(value);
+      encoderRenderSliderReadout(joint);
+    }
+  }
+
+  function encoderRenderSliderReadout(joint) {
+    const valueId = { coxa_deg: "encoder-coxa-value", femur_deg: "encoder-femur-value", tibia_deg: "encoder-tibia-value" };
+    const v = encoderSliderValue(joint);
+    setText(valueId[joint], (v >= 0 ? "+" : "") + v.toFixed(1));
+  }
+
+  function encoderAbsoluteFromDraft(leg, legFromTriplet) {
+    const out = {};
+    for (const key of ENCODER_JOINT_KEYS) {
+      const base = Number(legFromTriplet[key] || 0);
+      const offset = Number(encoderDraft[leg][key] || 0);
+      const abs = base + offset;
+      out[key] = Math.max(0, Math.min(180, abs));
+    }
+    return out;
+  }
+
+  function encoderAutoApplyOn() {
+    const node = el("encoder-auto-apply");
+    return Boolean(node && node.checked);
+  }
+
+  function encoderScheduleAutoSend(enc) {
+    if (!encoderAutoApplyOn()) return;
+    if (!enc || !enc.active || encoderSelectedLeg == null) return;
+    if (encoderAutoSendTimer) {
+      window.clearTimeout(encoderAutoSendTimer);
+    }
+    encoderAutoSendTimer = window.setTimeout(function () {
+      encoderAutoSendTimer = null;
+      encoderSendCurrent();
+    }, 80);
+  }
+
+  function encoderPushCurrentDraft(sendPreview, options) {
+    const opts = Object.assign({
+      errorText: sendPreview ? "Unable to send preview" : "Unable to update leg",
+      showErrorToast: true,
+    }, options || {});
+    if (encoderSelectedLeg == null) return Promise.resolve(null);
+    const status = lastStatus && lastStatus.dance && lastStatus.dance.encoder;
+    if (!status || !status.active) return Promise.resolve(null);
+    const fromTriplet = (status.current_state_from || [])[encoderSelectedLeg];
+    if (!fromTriplet) return Promise.resolve(null);
+    const angles = encoderAbsoluteFromDraft(encoderSelectedLeg, fromTriplet);
+    return postJSON("/api/dance/encoding/draft",
+      { leg_index: encoderSelectedLeg, angles: angles, send: Boolean(sendPreview) },
+      true, ACTION_TIMEOUT_MS
+    ).then(function (result) {
+      if (!result.ok && opts.showErrorToast) {
+        showToast(result.data.error || opts.errorText, "warning");
+      }
+      return refreshStatus().then(function () {
+        return result;
+      });
+    });
+  }
+
+  function encoderLegDraftNeedsCommit(enc, legIndex) {
+    if (legIndex == null || !enc || !enc.active) return false;
+    const fromTriplet = (enc.current_state_from || [])[legIndex];
+    const toTriplet = (enc.current_state_to || [])[legIndex];
+    const localLegDraft = encoderDraft[legIndex];
+    if (!fromTriplet || !toTriplet || !localLegDraft) return false;
+    for (const key of ENCODER_JOINT_KEYS) {
+      const localDraft = Number(localLegDraft[key] || 0);
+      const savedDraft = Number(toTriplet[key] || 0) - Number(fromTriplet[key] || 0);
+      if (Math.abs(localDraft - savedDraft) > 0.001) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function encoderHasUnsavedCurrentState(enc) {
+    if (!enc || !enc.active) return false;
+    if (Array.isArray(enc.current_state_edited) && enc.current_state_edited.some(Boolean)) {
+      return true;
+    }
+    for (let legIndex = 0; legIndex < encoderDraft.length; legIndex++) {
+      if (encoderLegDraftNeedsCommit(enc, legIndex)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function encoderSyncLegDraftFromBackend(enc, legIndex) {
+    if (legIndex == null || !enc || !enc.active || encoderLegDraftNeedsCommit(enc, legIndex)) return;
+    const fromTriplet = (enc.current_state_from || [])[legIndex] || {};
+    const toTriplet = (enc.current_state_to || [])[legIndex] || {};
+    for (const key of ENCODER_JOINT_KEYS) {
+      encoderDraft[legIndex][key] = Number(toTriplet[key] || 0) - Number(fromTriplet[key] || 0);
+    }
+  }
+
+  async function encoderCommitPendingDrafts() {
+    const enc = lastStatus && lastStatus.dance && lastStatus.dance.encoder;
+    if (!enc || !enc.active) return;
+    const pending = [];
+    for (let legIndex = 0; legIndex < encoderDraft.length; legIndex++) {
+      if (!encoderLegDraftNeedsCommit(enc, legIndex)) continue;
+      const fromTriplet = (enc.current_state_from || [])[legIndex];
+      if (fromTriplet) {
+        pending.push({
+          legIndex,
+          angles: encoderAbsoluteFromDraft(legIndex, fromTriplet),
+        });
+      }
+    }
+    for (const draft of pending) {
+      const result = await postJSON("/api/dance/encoding/draft",
+        { leg_index: draft.legIndex, angles: draft.angles, send: false },
+        true, ACTION_TIMEOUT_MS
+      );
+      if (!result.ok) {
+        throw new Error(result.data.error || "Unable to commit pending leg before saving state");
+      }
+      applyStatus(result.data);
+    }
+  }
+
+  function encoderSendCurrent(options) {
+    return encoderPushCurrentDraft(true, options);
+  }
+
+  function encoderSelectLeg(legIndex) {
+    encoderSelectedLeg = legIndex;
+    document.querySelectorAll("[data-encoder-leg]").forEach(function (btn) {
+      btn.classList.toggle("active", parseInt(btn.dataset.encoderLeg, 10) === legIndex);
+    });
+    postJSON("/api/dance/encoding/select-leg", { leg_index: legIndex }, true, ACTION_TIMEOUT_MS)
+      .catch(function () { /* backend may reject if session inactive; ignore */ });
+    // Keep local pending edits when switching legs; otherwise sync sliders to
+    // the backend's current "to" relative to "from" for this leg.
+    const enc = lastStatus && lastStatus.dance && lastStatus.dance.encoder;
+    if (enc && enc.active) {
+      encoderSyncLegDraftFromBackend(enc, legIndex);
+    }
+    encoderRefreshSlidersFromDraft();
+  }
+
+  function encoderSelectJoint(joint) {
+    encoderSelectedJoint = joint;
+    document.querySelectorAll("[data-encoder-joint]").forEach(function (btn) {
+      btn.classList.toggle("active", btn.dataset.encoderJoint === joint);
+    });
+  }
+
+  function encoderRefreshSlidersFromDraft() {
+    if (encoderSelectedLeg == null) return;
+    for (const key of ENCODER_JOINT_KEYS) {
+      encoderSetSliderValue(key, encoderDraft[encoderSelectedLeg][key]);
+    }
+  }
+
+  function encoderZeroDraft() {
+    if (encoderSelectedLeg == null) return;
+    for (const key of ENCODER_JOINT_KEYS) {
+      encoderDraft[encoderSelectedLeg][key] = 0;
+    }
+    encoderRefreshSlidersFromDraft();
+    encoderScheduleAutoSend(lastStatus && lastStatus.dance && lastStatus.dance.encoder);
+  }
+
+  function encoderNudge(joint, deltaDeg) {
+    if (encoderSelectedLeg == null) return;
+    const current = encoderSliderValue(joint);
+    const next = Math.max(-180, Math.min(180, current + deltaDeg));
+    encoderDraft[encoderSelectedLeg][joint] = next;
+    encoderSetSliderValue(joint, next);
+    encoderScheduleAutoSend(lastStatus && lastStatus.dance && lastStatus.dance.encoder);
+  }
+
+  function encoderHandleXbox(xboxStatus) {
+    if (!xboxStatus || !xboxStatus.connected) return;
+    const seq = xboxStatus.button_seq || {};
+    if (encoderLastXboxButtonSeq === null) {
+      encoderLastXboxButtonSeq = Object.assign({}, seq);
+      return;
+    }
+    const enc = lastStatus && lastStatus.dance && lastStatus.dance.encoder;
+    if (!enc || !enc.active) {
+      encoderLastXboxButtonSeq = Object.assign({}, seq);
+      return;
+    }
+    const last = encoderLastXboxButtonSeq || {};
+    const edge = function (key) {
+      return Number(seq[key] || 0) > Number(last[key] || 0);
+    };
+    // Y/X/A: select joint
+    for (const key of ["y", "x", "a"]) {
+      if (edge(key) && ENCODER_XBOX_JOINT_FOR_BTN[key]) {
+        encoderSelectJoint(ENCODER_XBOX_JOINT_FOR_BTN[key]);
+      }
+    }
+    // LB/RB: switch leg
+    if (edge("lb") || edge("rb")) {
+      const delta = edge("rb") ? 1 : -1;
+      const next = ((encoderSelectedLeg == null ? 0 : encoderSelectedLeg) + delta + 6) % 6;
+      encoderSelectLeg(next);
+    }
+    // B: Save State
+    if (edge("b")) {
+      const btn = el("encoder-save-state");
+      if (btn && !btn.disabled) btn.click();
+    }
+    encoderLastXboxButtonSeq = Object.assign({}, seq);
+
+    // Right stick Y: nudge selected joint draft
+    const stickY = Number(xboxStatus.calibration_adjust || 0);
+    if (Number.isFinite(stickY) && Math.abs(stickY) >= XBOX_ENCODER_DEADZONE) {
+      const delta = Math.round((stickY / 1000) * XBOX_ENCODER_MAX_STEP_DEG * 10) / 10;
+      const now = Date.now();
+      if (delta && now - encoderLastStickStep > XBOX_ENCODER_NUDGE_MS) {
+        encoderLastStickStep = now;
+        encoderNudge(encoderSelectedJoint, delta);
+      }
+    }
+  }
+
+  function updateDanceEncoder(data) {
+    if (!el("encoder-chip")) {
+      return;
+    }
+    const enc = (data.dance && data.dance.encoder) || {};
+    const calibration = data.calibration || {};
+    const calibrationComplete = Boolean(calibration.complete);
+
+    setStatusChip("encoder-chip", enc.active ? true : null,
+      "Editing '" + (enc.name || "dance") + "'",
+      "Idle", "Session idle");
+
+    const startBtn = el("encoder-start");
+    const saveStateBtn = el("encoder-save-state");
+    const saveDanceBtn = el("encoder-save-dance");
+    const abortBtn = el("encoder-abort");
+    const sendBtn = el("encoder-send");
+    const commitBtn = el("encoder-save-leg-offset");
+    const zeroBtn = el("encoder-zero-draft");
+    if (startBtn) startBtn.disabled = Boolean(enc.active) || !calibrationComplete || actionInFlight;
+    if (saveStateBtn) saveStateBtn.disabled = !enc.active || actionInFlight;
+    if (saveDanceBtn) saveDanceBtn.disabled = !enc.active || (enc.saved_state_count || 0) === 0 || actionInFlight;
+    if (abortBtn) abortBtn.disabled = !enc.active || actionInFlight;
+    const canEditSelectedLeg = Boolean(enc.active) && encoderSelectedLeg != null;
+    if (sendBtn) sendBtn.disabled = !canEditSelectedLeg || actionInFlight;
+    if (commitBtn) commitBtn.disabled = !canEditSelectedLeg || actionInFlight;
+    if (zeroBtn) zeroBtn.disabled = !canEditSelectedLeg || actionInFlight;
+
+    setText("encoder-state-index", enc.active ? String(enc.current_state_index) : "--");
+    setText("encoder-saved-count", (enc.saved_state_count || 0) + " saved");
+    const durationInput = el("encoder-state-duration");
+    if (durationInput && enc.active && !durationInput._userEdited) {
+      durationInput.value = enc.current_state_duration_ms;
+    }
+
+    // When the encoder advances to a new state, zero all drafts locally.
+    if (enc.active && encoderDraftStateIndex !== enc.current_state_index) {
+      encoderDraftStateIndex = enc.current_state_index;
+      encoderResetDrafts();
+      encoderRefreshSlidersFromDraft();
+    }
+    if (!enc.active) {
+      encoderDraftStateIndex = null;
+    }
+
+    // Leg card states
+    for (let i = 0; i < 6; i++) {
+      const card = document.querySelector('[data-encoder-leg="' + i + '"]');
+      if (!card) continue;
+      card.disabled = actionInFlight;
+      card.classList.toggle("active", encoderSelectedLeg === i);
+      const stateNode = el("encoder-leg-state-" + i);
+      if (stateNode) {
+        const edited = enc.active && Array.isArray(enc.current_state_edited) && enc.current_state_edited[i];
+        let triplet = null;
+        if (enc.active && Array.isArray(enc.current_state_to)) {
+          triplet = enc.current_state_to[i] || null;
+        } else if (Array.isArray(calibration.legs)) {
+          const leg = calibration.legs[i];
+          if (leg) triplet = leg.angles_deg;
+        }
+        if (triplet) {
+          const fmt = (v) => (typeof v === "number" ? v.toFixed(1) : "--");
+          stateNode.textContent = (edited ? "Edited · " : (enc.active ? "Untouched · " : "Neutral · "))
+            + fmt(triplet.coxa_deg) + " / " + fmt(triplet.femur_deg) + " / " + fmt(triplet.tibia_deg);
+        } else {
+          stateNode.textContent = "(calibration missing)";
+        }
+      }
+    }
+
+    // Editor title + from/to
+    const titleNode = el("encoder-editor-title");
+    const detailNode = el("encoder-leg-detail");
+    const fromNode = el("encoder-leg-from");
+    const toNode = el("encoder-leg-to");
+    if (titleNode) {
+      if (encoderSelectedLeg != null) {
+        titleNode.textContent = ENCODER_LEG_LABELS[encoderSelectedLeg] + " · " + ENCODER_JOINT_LABELS[encoderSelectedJoint];
+      } else {
+        titleNode.textContent = "Pick a leg";
+      }
+    }
+    if (detailNode) {
+      if (encoderSelectedLeg == null) {
+        detailNode.textContent = enc.active
+          ? "Select a leg, then adjust offsets or use Xbox Y/X/A + right stick to draft this state."
+          : "Start a session, then select one of the six legs to edit its draft offsets.";
+      } else if (enc.active) {
+        detailNode.textContent = "Editing " + ENCODER_LEG_LABELS[encoderSelectedLeg]
+          + ". Offsets are relative to this state's from pose; Commit updates the saved draft, Preview also sends it to the robot.";
+      } else {
+        detailNode.textContent = "Previewing the saved neutral for " + ENCODER_LEG_LABELS[encoderSelectedLeg]
+          + ". Start Encoding to begin drafting a new state.";
+      }
+    }
+    if (fromNode) {
+      if (encoderSelectedLeg != null) {
+        let tripletFrom = null;
+        if (enc.active && Array.isArray(enc.current_state_from)) {
+          tripletFrom = enc.current_state_from[encoderSelectedLeg] || null;
+        } else if (Array.isArray(calibration.legs)) {
+          const leg = calibration.legs[encoderSelectedLeg];
+          if (leg) tripletFrom = leg.angles_deg;
+        }
+        const fmt = (v) => (typeof v === "number" ? v.toFixed(2) : "--");
+        if (tripletFrom) {
+          fromNode.textContent = fmt(tripletFrom.coxa_deg) + " / " + fmt(tripletFrom.femur_deg) + " / " + fmt(tripletFrom.tibia_deg);
+        } else {
+          fromNode.textContent = "--";
+        }
+      } else {
+        fromNode.textContent = "--";
+      }
+    }
+    if (toNode) {
+      if (encoderSelectedLeg != null && enc.active && Array.isArray(enc.current_state_to)) {
+        const tripletTo = enc.current_state_to[encoderSelectedLeg] || {};
+        const fmt = (v) => (typeof v === "number" ? v.toFixed(2) : "--");
+        toNode.textContent = fmt(tripletTo.coxa_deg) + " / " + fmt(tripletTo.femur_deg) + " / " + fmt(tripletTo.tibia_deg);
+      } else {
+        toNode.textContent = "--";
+      }
+    }
+
+    document.querySelectorAll("[data-encoder-joint]").forEach(function (btn) {
+      btn.disabled = encoderSelectedLeg == null || actionInFlight;
+      btn.classList.toggle("active", btn.dataset.encoderJoint === encoderSelectedJoint);
+    });
+    [
+      el("encoder-coxa"),
+      el("encoder-femur"),
+      el("encoder-tibia"),
+      el("encoder-auto-apply"),
+    ].forEach(function (node) {
+      if (node) node.disabled = !canEditSelectedLeg || actionInFlight;
+    });
+
+    // Render state history
+    const list = el("encoder-state-list");
+    if (list) {
+      if (!enc.active) {
+        list.textContent = calibrationComplete
+          ? "Press Start Encoding to begin."
+          : "Finish calibration (6/6 legs saved) before encoding a dance.";
+      } else {
+        const rows = [];
+        for (const state of (enc.saved_states || [])) {
+          const editedLegs = (state.legs || [])
+            .filter((leg) => leg.edited)
+            .map((leg) => ENCODER_LEG_LABELS[leg.leg_index] || ("L" + (leg.leg_index + 1)))
+            .join(", ");
+          rows.push("state " + state.index + " · " + state.duration_ms + "ms · legs: " + (editedLegs || "none"));
+        }
+        rows.push("current · " + (enc.current_state_duration_ms || 440) + "ms");
+        list.textContent = rows.join("\n");
+      }
+    }
+
+    // Xbox controller handoff for the encoder runs through the faster
+    // /api/xbox/status poll so stick nudges match calibration response.
+  }
+
+  function bindDanceEncoderPage() {
+    if (!el("encoder-start")) {
+      return;
+    }
+    const startBtn = el("encoder-start");
+    const saveStateBtn = el("encoder-save-state");
+    const saveDanceBtn = el("encoder-save-dance");
+    const abortBtn = el("encoder-abort");
+    const sendBtn = el("encoder-send");
+    const commitBtn = el("encoder-save-leg-offset");
+    const zeroBtn = el("encoder-zero-draft");
+
+    if (startBtn) {
+      startBtn.addEventListener("click", function () {
+        const name = (el("encoder-name") || {}).value || "";
+        const trimmedName = String(name).trim();
+        if (!trimmedName) {
+          showToast("Enter a dance name first", "warning");
+          const nameNode = el("encoder-name");
+          if (nameNode && typeof nameNode.focus === "function") {
+            nameNode.focus();
+          }
+          return;
+        }
+        const defaultSegment = parseInt(((el("encoder-default-segment") || {}).value || "440"), 10);
+        runAction(async function () {
+          const result = await postJSON("/api/dance/encoding/start",
+            { name: trimmedName, default_segment_ms: defaultSegment }, true, ACTION_TIMEOUT_MS);
+          if (!result.ok) throw new Error(result.data.error || "Unable to start session");
+          showToast("Dance encoding session started", "success");
+          encoderResetDrafts();
+          encoderRefreshSlidersFromDraft();
+          await refreshStatus();
+        }, ACTION_TIMEOUT_MS);
+      });
+    }
+
+    if (saveStateBtn) {
+      saveStateBtn.addEventListener("click", function () {
+        runAction(async function () {
+          await encoderCommitPendingDrafts();
+          const result = await postJSON("/api/dance/encoding/save-state", {}, true, ACTION_TIMEOUT_MS);
+          if (!result.ok) throw new Error(result.data.error || "Unable to save state");
+          showToast("State saved", "success");
+          applyStatus(result.data);
+          const durationInput = el("encoder-state-duration");
+          if (durationInput) durationInput._userEdited = false;
+          encoderResetDrafts();
+          encoderRefreshSlidersFromDraft();
+        }, ACTION_TIMEOUT_MS);
+      });
+    }
+
+    if (saveDanceBtn) {
+      saveDanceBtn.addEventListener("click", function () {
+        const enc = lastStatus && lastStatus.dance && lastStatus.dance.encoder;
+        if (encoderHasUnsavedCurrentState(enc)) {
+          showToast("Current state has unsaved edits. Press Save State before Save Dance.", "warning");
+          return;
+        }
+        const rawTag = ((el("encoder-save-tag") || {}).value || "").trim();
+        let tagId = null;
+        if (rawTag !== "") {
+          tagId = parseInt(rawTag, 10);
+          if (!Number.isFinite(tagId)) {
+            showToast("Tag id must be an integer", "warning");
+            return;
+          }
+        }
+        runAction(async function () {
+          const result = await postJSON("/api/dance/encoding/save-dance", { tag_id: tagId }, true, ACTION_TIMEOUT_MS);
+          if (!result.ok) throw new Error(result.data.error || "Unable to save dance");
+          showToast("Dance saved as preset", "success");
+          encoderSelectedLeg = null;
+          encoderResetDrafts();
+          applyStatus(result.data);
+          encoderRefreshSlidersFromDraft();
+        }, ACTION_TIMEOUT_MS);
+      });
+    }
+
+    if (abortBtn) {
+      abortBtn.addEventListener("click", function () {
+        if (!window.confirm("Discard this dance encoding session? Unsaved states will be lost.")) return;
+        runAction(async function () {
+          await postJSON("/api/dance/encoding/abort", {}, true, ACTION_TIMEOUT_MS);
+          showToast("Session discarded", "info");
+          encoderSelectedLeg = null;
+          encoderResetDrafts();
+          encoderRefreshSlidersFromDraft();
+          await refreshStatus();
+        }, ACTION_TIMEOUT_MS);
+      });
+    }
+
+    // Leg cards
+    document.querySelectorAll("[data-encoder-leg]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const idx = parseInt(btn.dataset.encoderLeg, 10);
+        encoderSelectLeg(idx);
+      });
+    });
+
+    // Joint toggle
+    document.querySelectorAll("[data-encoder-joint]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        encoderSelectJoint(btn.dataset.encoderJoint);
+      });
+    });
+
+    // Slider inputs
+    const sliders = [
+      { id: "encoder-coxa", joint: "coxa_deg" },
+      { id: "encoder-femur", joint: "femur_deg" },
+      { id: "encoder-tibia", joint: "tibia_deg" },
+    ];
+    for (const { id, joint } of sliders) {
+      const node = el(id);
+      if (!node) continue;
+      node.addEventListener("input", function () {
+        encoderRenderSliderReadout(joint);
+        if (encoderSelectedLeg != null) {
+          encoderDraft[encoderSelectedLeg][joint] = parseFloat(node.value);
+        }
+        encoderScheduleAutoSend(lastStatus && lastStatus.dance && lastStatus.dance.encoder);
+      });
+    }
+
+    if (sendBtn) {
+      sendBtn.addEventListener("click", function () {
+        if (encoderSelectedLeg == null) {
+          showToast("Select a leg first", "warning");
+          return;
+        }
+        encoderSendCurrent();
+      });
+    }
+
+    if (commitBtn) {
+      commitBtn.addEventListener("click", function () {
+        if (encoderSelectedLeg == null) {
+          showToast("Select a leg first", "warning");
+          return;
+        }
+        encoderPushCurrentDraft(false, { errorText: "Unable to commit this leg" }).then(function (result) {
+          if (result && result.ok) {
+            showToast("Leg draft committed", "success");
+          }
+        });
+      });
+    }
+
+    if (zeroBtn) {
+      zeroBtn.addEventListener("click", function () {
+        encoderZeroDraft();
+        encoderPushCurrentDraft(true, {
+          errorText: "Unable to reset this leg",
+          showErrorToast: true,
+        });
+      });
+    }
+
+    const durationInput = el("encoder-state-duration");
+    if (durationInput) {
+      durationInput.addEventListener("input", function () {
+        durationInput._userEdited = true;
+      });
+      durationInput.addEventListener("change", function () {
+        const value = parseInt(durationInput.value, 10);
+        if (!Number.isFinite(value)) return;
+        runAction(async function () {
+          const result = await postJSON("/api/dance/encoding/duration", { duration_ms: value }, true, ACTION_TIMEOUT_MS);
+          if (!result.ok) throw new Error(result.data.error || "Unable to set duration");
+          await refreshStatus();
+        }, ACTION_TIMEOUT_MS);
+      });
+    }
   }
 
   function updateCameraPage(data) {
@@ -1539,7 +2283,9 @@
   }
 
   async function refreshXboxCalibrationStatus() {
-    if (!pageActive || actionInFlight || !el("calibration-selected-joint")) {
+    const hasCalibrationControls = Boolean(el("calibration-selected-joint"));
+    const hasEncoderControls = Boolean(el("encoder-start"));
+    if (!pageActive || actionInFlight || (!hasCalibrationControls && !hasEncoderControls)) {
       return;
     }
     if (typeof document !== "undefined" && document.visibilityState === "hidden") {
@@ -1553,7 +2299,13 @@
       if (!result.ok) {
         return;
       }
-      processXboxCalibrationStatus(result.data || {});
+      const status = result.data || {};
+      if (hasCalibrationControls) {
+        processXboxCalibrationStatus(status);
+      }
+      if (hasEncoderControls) {
+        encoderHandleXbox(status);
+      }
     } catch (_error) {
       // Xbox polling is best-effort; the main dashboard poll still updates status.
     }
@@ -1869,16 +2621,6 @@
         showCameraFrameFallback();
       });
     }
-    if (frame) {
-      frame.addEventListener("load", function () {
-        frame.dataset.loaded = "true";
-        const currentStream = el("camera-stream");
-        if (currentStream && currentStream.dataset.loaded === "true") {
-          return;
-        }
-        showCameraFrameFallback();
-      });
-    }
   }
 
   function bindActions() {
@@ -1983,6 +2725,17 @@
           await refreshStatus();
         },
       },
+      {
+        id: "dance-stop",
+        handler: async function () {
+          const result = await postJSON("/api/dance/stop", {}, true, ACTION_TIMEOUT_MS);
+          if (!result.ok) {
+            throw new Error(result.data.error || "Unable to stop dance");
+          }
+          showToast("Dance stopped", "info");
+          await refreshStatus();
+        },
+      },
     ];
 
     actionMap.forEach((item) => {
@@ -2001,19 +2754,68 @@
       });
     });
 
-    document.querySelectorAll("[data-dance-preset]").forEach((node) => {
-      node.addEventListener("click", function () {
+    // Preset grid (and encoder controls) use click delegation because the
+    // list is re-rendered every status tick.
+    document.addEventListener("click", function (evt) {
+      const presetBtn = evt.target.closest && evt.target.closest("[data-dance-preset]");
+      if (presetBtn && !presetBtn.disabled) {
+        const preset = presetBtn.dataset.dancePreset;
         runAction(async function () {
-          const preset = node.dataset.dancePreset;
           const result = await postJSON("/api/dance/start", { preset: preset }, true, ACTION_TIMEOUT_MS);
           if (result.ok) {
-            showToast("Dance preset queued", "success");
+            showToast("Dance preset " + preset + " started", "success");
           } else {
-            showToast(result.data.message || "Dance engine not implemented yet", "warning");
+            showToast(result.data.error || "Unable to start dance preset", "warning");
           }
           await refreshStatus();
         }, ACTION_TIMEOUT_MS);
-      });
+        return;
+      }
+      const deleteBtn = evt.target.closest && evt.target.closest("[data-dance-delete]");
+      if (deleteBtn && !deleteBtn.disabled) {
+        const preset = deleteBtn.dataset.danceDelete;
+        if (!window.confirm("Delete preset '" + preset + "'? This cannot be undone.")) {
+          return;
+        }
+        runAction(async function () {
+          const result = await requestJSON("/api/dance/presets/" + encodeURIComponent(preset), { method: "DELETE" }, false, ACTION_TIMEOUT_MS);
+          if (result.ok) {
+            showToast("Preset '" + preset + "' deleted", "info");
+          } else {
+            showToast(result.data.error || "Unable to delete preset", "warning");
+          }
+          await refreshStatus();
+        }, ACTION_TIMEOUT_MS);
+        return;
+      }
+      const rebindBtn = evt.target.closest && evt.target.closest("[data-dance-rebind]");
+      if (rebindBtn && !rebindBtn.disabled) {
+        const preset = rebindBtn.dataset.danceRebind;
+        const input = document.querySelector("[data-dance-rebind-input='" + preset + "']");
+        if (!input) {
+          return;
+        }
+        const raw = (input.value || "").trim();
+        let tagId = null;
+        if (raw !== "") {
+          const parsed = parseInt(raw, 10);
+          if (!Number.isFinite(parsed)) {
+            showToast("Tag id must be an integer", "warning");
+            return;
+          }
+          tagId = parsed;
+        }
+        runAction(async function () {
+          const result = await postJSON("/api/dance/presets/" + encodeURIComponent(preset) + "/tag", { tag_id: tagId }, true, ACTION_TIMEOUT_MS);
+          if (result.ok) {
+            showToast("Tag binding updated for '" + preset + "'", "success");
+          } else {
+            showToast(result.data.error || "Unable to update tag binding", "warning");
+          }
+          await refreshStatus();
+        }, ACTION_TIMEOUT_MS);
+        return;
+      }
     });
   }
 
@@ -2049,6 +2851,7 @@
   bindCameraEmbed();
   bindDriveButtons();
   bindKeyboardControls();
+  bindDanceEncoderPage();
   syncActionButtons();
   if (typeof document !== "undefined") {
     window.addEventListener("storage", function (event) {

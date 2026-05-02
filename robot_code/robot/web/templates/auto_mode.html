@@ -2,6 +2,8 @@
 
 {% block header_actions %}
   <button class="button secondary" id="deploy-automated">Deploy Automated Mode</button>
+  <button class="button ghost" id="dance-stop">Stop Dance</button>
+  <a class="button ghost" href="{{ url_for('dance_encoding_page') }}">Dance Encoder</a>
   <button class="button ghost" id="camera-stop">Stop Camera</button>
   <button class="button ghost" id="stop-all">Stop All Services</button>
 {% endblock %}
@@ -23,7 +25,7 @@
           <span class="step-number">1</span>
           <div>
             <strong>Deploy automated mode</strong>
-            <p>Starts runtime and the AprilTag detect camera together.</p>
+            <p>Starts the AprilTag detect camera and prepares the preset worker. Runtime stays off so the worker can own the serial link.</p>
           </div>
         </div>
         <div class="step-card">
@@ -37,7 +39,7 @@
           <span class="step-number">3</span>
           <div>
             <strong>Pick a dance preset</strong>
-            <p>The UI is live; the actual dance engine can be wired in later.</p>
+            <p>Click a preset below or show its bound AprilTag to the camera. Show Tag 1 (or click Stop Dance) to return to neutral.</p>
           </div>
         </div>
       </div>
@@ -60,8 +62,10 @@
         </div>
         <div class="info-card">
           <strong>Dance Engine</strong>
-          <span id="dance-state">Placeholder</span>
-          <p id="dance-detail">Preset buttons are ready; choreography runtime is not attached yet.</p>
+          <span id="dance-state">Idle</span>
+          <p id="dance-detail">Deploy automated mode, then pick a preset or show an AprilTag.</p>
+          <p id="dance-tag-info">Tag 1 = stop (reserved). Other tags are bound per preset below.</p>
+          <p id="dance-error" class="error-copy hidden"></p>
         </div>
       </div>
 
@@ -84,17 +88,17 @@
             <h2>Preset Launcher</h2>
           </div>
         </div>
-        <div class="preset-grid">
-          {% for preset in dance_presets %}
-            <button class="preset-card" data-dance-preset="{{ preset.id }}">
-              <strong>{{ preset.label }}</strong>
-              <span>{{ preset.detail }}</span>
-            </button>
-          {% endfor %}
+        <div class="preset-grid" id="dance-preset-grid">
+          <!-- Populated dynamically by robot_ui.js from status.dance.presets -->
+        </div>
+        <div class="empty-copy hidden" id="dance-preset-empty">
+          No dances saved yet. Head to the Dance Encoder to create one.
         </div>
         <div class="info-card">
           <strong>Last Request</strong>
           <span id="dance-last-request">No preset requested yet.</span>
+          <p id="dance-last-tag">Last tag: --</p>
+          <p id="dance-last-stop">Last stop reason: --</p>
         </div>
       </article>
 

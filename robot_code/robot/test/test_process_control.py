@@ -103,6 +103,15 @@ class ProcessControlTest(unittest.TestCase):
             ],
         )
 
+    def test_camera_config_normalizes_specific_ip_host_to_wildcard(self) -> None:
+        config = CameraLaunchConfig.from_mapping({
+            "mode": "detect",
+            "host": "128.237.1.23",
+            "port": 8080,
+            "detector": "apriltag",
+        })
+        self.assertEqual(config.host, "0.0.0.0")
+
     def test_manager_tracks_start_and_stop_status(self) -> None:
         popen_factory = _FakePopenFactory()
         manager = ManagedProcessManager(

@@ -7,7 +7,7 @@ from typing import Sequence
 
 DEFAULT_SERIAL_PORT = "/dev/serial0"
 BAUD_RATE = 115200
-UPDATE_INTERVAL_S = 0.05
+UPDATE_INTERVAL_S = 0.02
 
 MOVE_ALL = "M"
 HOME = "H"
@@ -23,6 +23,9 @@ IMU = "IMU"
 NUM_LEGS = 6
 JOINTS_PER_LEG = 3
 NUM_SERVOS = NUM_LEGS * JOINTS_PER_LEG
+LOGICAL_LEG_ORDER = ("L1", "L2", "L3", "R1", "R2", "R3")
+WIRE_LEG_ORDER = ("L1", "L2", "L3", "R1", "R2", "R3")
+WIRE_LEG_LOGICAL_INDICES = (0, 1, 2, 3, 4, 5)
 ANGLE_MIN = 0.0
 ANGLE_MAX = 180.0
 BENCH_LEG_SAFE_LIMITS_DEG: tuple[tuple[float, float], ...] = (
@@ -68,6 +71,16 @@ def _format_angles(angles: Sequence[float], *, expected: int) -> list[float]:
     return values
 
 
+def logical_to_wire_angles(angles: Sequence[float]) -> list[float]:
+    """Map logical raspi leg order to the current physical UART wire order."""
+    values = _format_angles(angles, expected=NUM_SERVOS)
+    mapped: list[float] = []
+    for logical_leg_index in WIRE_LEG_LOGICAL_INDICES:
+        start = logical_leg_index * JOINTS_PER_LEG
+        mapped.extend(values[start:start + JOINTS_PER_LEG])
+    return mapped
+
+
 def front_leg_angles(angles: Sequence[float], *, leg_count: int = 1) -> list[float]:
     """
     Return the first ``leg_count`` legs in configured leg order as
@@ -96,8 +109,8 @@ def front_leg_angles(angles: Sequence[float], *, leg_count: int = 1) -> list[flo
 
 
 def format_move_command(angles: Sequence[float]) -> str:
-    """Format a full-body move command with 18 servo angles."""
-    values = _format_angles(angles, expected=NUM_SERVOS)
+    """Format a full-body move command with 18 logical servo angles."""
+    values = logical_to_wire_angles(angles)
     return f"{MOVE_ALL}:" + ",".join(f"{angle:.1f}" for angle in values) + "\n"
 
 
@@ -106,7 +119,7 @@ def format_full_dir_command(
     angles: Sequence[float],
 ) -> str:
     """
-    Format a canonical production DIR frame with 18 servo angles.
+    Format a canonical production DIR frame with 18 logical servo angles.
 
     This is the single wire-format serializer shared by both the runtime
     bridge (``FullGaitLegBridgeMotion``) and the calibration preview path
@@ -117,6 +130,12 @@ def format_full_dir_command(
     Semantics:
         - ``move_dir`` must be one of ``N/F/B/L/R/LL/RR``.
         - ``angles`` must be exactly 18 values.
+        - Input angles are in logical raspi order
+          ``L1,L2,L3,R1,R2,R3``.
+        - Output is in the same order ``L1,L2,L3,R1,R2,R3``.
+          The previous R1/R3 wire swap was removed once the ESP32
+          firmware was updated to handle leg mapping internally;
+          double-swapping caused R1/R3 to appear reversed in calibration.
         - Only the hard 0..180 contract clamp is applied. The conservative
           bench-safety window (see ``clamp_bench_leg_angle``) is NOT applied
           here so that calibrated neutral poses sitting outside that window
@@ -124,7 +143,7 @@ def format_full_dir_command(
           enforced upstream before angles reach this serializer.
     """
     direction = normalize_move_dir(move_dir)
-    values = _format_angles(angles, expected=NUM_SERVOS)
+    values = logical_to_wire_angles(angles)
     return f"{direction}:" + ",".join(f"{angle:.1f}" for angle in values) + "\n"
 
 
@@ -143,6 +162,8 @@ def format_move_dir_command(
     """
     direction = normalize_move_dir(move_dir)
     raw_values = front_leg_angles(angles, leg_count=leg_count)
+    if int(leg_count) == NUM_LEGS:
+        raw_values = logical_to_wire_angles(raw_values)
     values = [
         clamp_bench_leg_angle(angle, joint_index % JOINTS_PER_LEG)
         for joint_index, angle in enumerate(raw_values)

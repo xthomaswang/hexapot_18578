@@ -22,8 +22,10 @@ from ik_engine.calibration import (
 from ik_engine.config import DEFAULT_CONFIG
 from runtime.protocol import (
     format_full_dir_command,
+    format_move_command,
     format_move_dir_command,
     front_leg_angles,
+    logical_to_wire_angles,
 )
 from runtime.runtime import ControlCommand, FullGaitLegBridgeMotion, describe_motion
 
@@ -216,6 +218,29 @@ class MotionProtocolTest(unittest.TestCase):
             "N:90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3,"
             "90.0,64.2,116.3,90.0,64.2,116.3,90.0,64.2,116.3\n",
         )
+
+    def test_logical_to_wire_angles_swaps_r1_and_r3(self) -> None:
+        angles = [float(i) for i in range(18)]
+        self.assertEqual(
+            logical_to_wire_angles(angles),
+            [
+                0.0, 1.0, 2.0,
+                3.0, 4.0, 5.0,
+                6.0, 7.0, 8.0,
+                15.0, 16.0, 17.0,
+                12.0, 13.0, 14.0,
+                9.0, 10.0, 11.0,
+            ],
+        )
+
+    def test_full_frame_serializers_apply_wire_leg_order(self) -> None:
+        angles = [float(i) for i in range(18)]
+        expected_payload = (
+            "0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,"
+            "15.0,16.0,17.0,12.0,13.0,14.0,9.0,10.0,11.0\n"
+        )
+        self.assertEqual(format_move_command(angles), "M:" + expected_payload)
+        self.assertEqual(format_full_dir_command("N", angles), "N:" + expected_payload)
 
     def test_format_full_dir_command_preserves_calibrated_pose_outside_bench_window(self) -> None:
         """A saved calibrated pose may sit outside the conservative bench window.

@@ -14,11 +14,28 @@
     </div>
     <nav class="sidebar-nav">
       <a href="{{ url_for('dashboard') }}" class="nav-link{% if page_key == 'dashboard' %} active{% endif %}">Dashboard</a>
-      <a href="{{ url_for('manual') }}" class="nav-link{% if page_key == 'manual' %} active{% endif %}">Manual</a>
-      <a href="{{ url_for('calibration') }}" class="nav-link{% if page_key == 'calibration' %} active{% endif %}">Calibration</a>
-      <a href="{{ url_for('auto') }}" class="nav-link{% if page_key == 'auto' %} active{% endif %}">Auto</a>
-      <a href="{{ url_for('dance') }}" class="nav-link{% if page_key == 'dance' %} active{% endif %}">Dance</a>
-      <a href="{{ url_for('camera') }}" class="nav-link{% if page_key == 'camera' %} active{% endif %}">Camera</a>
+
+      <div class="nav-stack{% if page_key in ['manual', 'dance'] %} active{% endif %}">
+        <a href="{{ url_for('manual') }}" class="nav-link nav-parent{% if page_key == 'manual' %} active{% endif %}">Manual</a>
+        <div class="nav-subnav">
+          <a href="{{ url_for('dance') }}" class="nav-sublink{% if page_key == 'dance' %} active{% endif %}">Manual Dance Recorder</a>
+        </div>
+      </div>
+
+      <div class="nav-stack{% if page_key in ['auto', 'dance_encoding'] %} active{% endif %}">
+        <a href="{{ url_for('auto') }}" class="nav-link nav-parent{% if page_key == 'auto' %} active{% endif %}">Auto</a>
+        <div class="nav-subnav">
+          <a href="{{ url_for('dance_encoding_page') }}" class="nav-sublink{% if page_key == 'dance_encoding' %} active{% endif %}">Dance Encoder</a>
+        </div>
+      </div>
+
+      <div class="nav-stack{% if page_key in ['calibration', 'camera'] %} active{% endif %}">
+        <div class="nav-section-label">Hardware Setting</div>
+        <div class="nav-subnav">
+          <a href="{{ url_for('calibration') }}" class="nav-sublink{% if page_key == 'calibration' %} active{% endif %}">Calibration</a>
+          <a href="{{ url_for('camera') }}" class="nav-sublink{% if page_key == 'camera' %} active{% endif %}">Camera</a>
+        </div>
+      </div>
     </nav>
     <div class="sidebar-footer">
       <div class="status-chip idle" id="sidebar-runtime-chip">Runtime idle</div>

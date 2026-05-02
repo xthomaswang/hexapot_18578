@@ -266,7 +266,6 @@ class SerialBridge:
 
     def write_line(self, line: str) -> None:
         self._serial.write(line.encode("ascii"))
-        print(f"[UART-TX] {line.rstrip()}", flush=True)
 
     def read_line(self) -> str:
         return self._serial.readline().decode("ascii", errors="replace").strip()
@@ -280,13 +279,11 @@ class SerialBridge:
         self._rx_buffer.extend(self._serial.read(waiting))
         chunks = self._rx_buffer.split(b"\n")
         self._rx_buffer = bytearray(chunks.pop() if chunks else b"")
-        lines: list[str] = []
-        for chunk in chunks:
-            decoded = chunk.rstrip(b"\r").decode("ascii", errors="replace")
-            if decoded.strip():
-                print(f"[UART-RX] {decoded}", flush=True)
-                lines.append(decoded)
-        return lines
+        return [
+            chunk.rstrip(b"\r").decode("ascii", errors="replace")
+            for chunk in chunks
+            if chunk.strip()
+        ]
 
     def transact(self, line: str, *, wait_for_reply: bool = False) -> str | None:
         self.write_line(line)
